@@ -1,5 +1,33 @@
 # Training eines Roboterarms über ein Neuronales Netzwerk
 
+## Github short cheat sheet
+
+Git Kurzanleitung:
+
+```bash
+git clone git@github.com:MKesenheimer/ai-reverse-kinematic.git
+```
+
+Änderungen von github holen und lokale Version updaten:
+
+```bash
+git pull
+```
+
+Lokale Änderungen zwischenspeichern:
+
+```bash
+git add --all
+git commit -m "<Beschreibung der Änderungen>"
+```
+
+Lokale Änderungen auf github veröffentlichen:
+
+```bash
+git push
+```
+
+
 ## Installation
 
 Linux / Unix:
