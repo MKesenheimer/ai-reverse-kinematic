@@ -14,6 +14,12 @@ git clone git@github.com:MKesenheimer/ai-reverse-kinematic.git
 git pull
 ```
 
+Gibt es lokale Änderungen zur aktuellen Version?
+
+```bash
+git diff
+```
+
 Lokale Änderungen zwischenspeichern:
 
 ```bash
@@ -40,7 +46,7 @@ pip3 install -r Requirements.txt
 ```
 
 Windows:
-```
+```bash
 python -m venv C:\Users\<username>\<projekt>\venv
 cd C:\Users\<username>\<projekt>
 venv\Scripts\activate.bat
