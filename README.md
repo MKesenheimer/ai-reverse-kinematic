@@ -1,8 +1,8 @@
 # Training eines Roboterarms über ein Neuronales Netzwerk
 
-## Github short cheat sheet
+## Git Kurzanleitung:
 
-Git Kurzanleitung:
+Projekt kopieren:
 
 ```bash
 git clone git@github.com:MKesenheimer/ai-reverse-kinematic.git
