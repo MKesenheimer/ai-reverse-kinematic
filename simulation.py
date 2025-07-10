@@ -24,7 +24,7 @@ model.compile(optimizer='adam',
 
 # summary
 model.summary()
-keras.utils.plot_model(model, "my_first_model_with_shape_info.png", show_shapes=True)
+keras.utils.plot_model(model, "my_first_model_with_shape_info_test.png", show_shapes=True)
 
 # train model on test data
 alpha = np.array([[0, 0], [1, 0], [0, 1]])
