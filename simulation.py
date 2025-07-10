@@ -29,10 +29,13 @@ keras.utils.plot_model(model, "my_first_model_with_shape_info.png", show_shapes=
 # train model on test data
 alpha = np.array([[0, 0], [1, 0], [0, 1]])
 coord = np.array([[0, 0], [1, 0], [1, 1]])
+
+model.fit(coord, alpha, epochs=1000, batch_size=8)
+
+print("Trainingsdaten")
 print(alpha)
 print(coord)
 
-model.fit(coord, alpha, epochs=100, batch_size=8)
-
+print("")
 y = model(coord)
 print(y)
