@@ -30,12 +30,13 @@ keras.utils.plot_model(model, "my_first_model_with_shape_info_test.png", show_sh
 alpha = np.array([[0, 0], [1, 0], [0, 1]])
 coord = np.array([[0, 0], [1, 0], [1, 1]])
 
-model.fit(coord, alpha, epochs=1000, batch_size=8)
+model.fit(coord, alpha, epochs=10000, batch_size=8)
 
-print("Trainingsdaten")
+print("Trainingsdaten:\nalpha:")
 print(alpha)
+print("Koordinaten:")
 print(coord)
 
-print("")
+print("\nBerchnete Winkel:")
 y = model(coord)
 print(y)

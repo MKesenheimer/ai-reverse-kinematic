@@ -33,6 +33,25 @@ Lokale Änderungen auf github veröffentlichen:
 git push
 ```
 
+Änderungshistorie anschauen ("commit log"):
+
+```bash
+git log
+```
+
+Lokale Änderungen auf letzten Commit zurücksetzen. Achtung! Dabei gehen die lokalen Änderungen verloren:
+
+```bash
+git reset --hard HEAD
+```
+
+Lokale Änderungen auf einen bestimmten Punkt zurücksetzen. Achtung! Dabei gehen die lokalen Änderungen verloren:
+
+```bash
+git reset --hard <commit-hash>
+```
+
+
 
 ## Installation
 
