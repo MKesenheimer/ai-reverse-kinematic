@@ -2,6 +2,9 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+from state import RobotState
+
+robotState = RobotState()
 
 if tf.config.list_physical_devices('GPU'):
   print("TensorFlow **IS** using the GPU")
@@ -30,7 +33,7 @@ keras.utils.plot_model(model, "my_first_model_with_shape_info_test.png", show_sh
 alpha = np.array([[0, 0], [1, 0], [0, 1]])
 coord = np.array([[0, 0], [1, 0], [1, 1]])
 
-model.fit(coord, alpha, epochs=10000, batch_size=8)
+model.fit(coord, alpha, epochs=100, batch_size=8)
 
 print("Trainingsdaten:\nalpha:")
 print(alpha)
@@ -40,3 +43,6 @@ print(coord)
 print("\nBerchnete Winkel:")
 y = model(coord)
 print(y)
+
+# Test: Update den Winkel des Roboterarms:
+robotState.set_angle_arm1(10)
