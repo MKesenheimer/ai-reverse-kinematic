@@ -45,4 +45,4 @@ y = model(coord)
 print(y)
 
 # Test: Update den Winkel des Roboterarms:
-robotState.set_angle_arm1(10)
+robotState.set_angle_arm1(0)
