@@ -33,41 +33,72 @@ Lokale Änderungen auf github veröffentlichen:
 git push
 ```
 
+Änderungshistorie anschauen ("commit log"):
+
+```bash
+git log
+```
+
+Lokale Änderungen auf letzten Commit zurücksetzen. Achtung! Dabei gehen die lokalen Änderungen verloren:
+
+```bash
+git reset --hard HEAD
+```
+
+Lokale Änderungen auf einen bestimmten Punkt zurücksetzen. Achtung! Dabei gehen die lokalen Änderungen verloren:
+
+```bash
+git reset --hard <commit-hash>
+```
 
 ## Installation
 
 Linux / Unix:
 
 ```bash
+cd ai-reverse-kinematic
 python3.11 -m venv venv
 source venv/bin/activate
 python -m ensurepip --upgrade
-pip3 install -r Requirements.txt
+pip3 install -r requirements.txt
 ```
 
 Windows:
 ```bash
-python -m venv C:\Users\<username>\<projekt>\venv
-cd C:\Users\<username>\<projekt>
+python -m venv C:\Users\<username>\ai-reverse-kinematic\venv
+cd C:\Users\<username>\ai-reverse-kinematic
 venv\Scripts\activate.bat
 python -m ensurepip --upgrade
-pip install -r Requirements.txt
+pip install -r requirements.txt
 ```
 
 Siehe [Python venv](https://docs.python.org/3/library/venv.html) für weitere Information.
 
+### Redis server installieren und ausführen
+
+Die Skripte `simulation.py` und `renderer.py` kommunizieren über einen Redis-Server. Über den Redis-Server wird der Status des Roboterarms übertragen. Der Redis-Server muss gestartet werden, bevor die Skripte ausgeführt werden.
+
+```bash
+docker run --rm --name redis -p 6379:6379 -v "$(pwd)/redis:/data" -d redis redis-server --save 60 1 --loglevel warning
+```
+
 ## Benutzung
 
-Linux / Unix:
+Aktivierung der virtuellen Umgebung in Linux / Unix:
 
 ```bash
 source venv/bin/activate
-python simulation.py
 ```
 
-Windows:
+Aktivierung der virtuellen Umgebung in Windows:
 
 ```bash
 venv\Scripts\activate.bat
+```
+
+Ausführen der Skripte:
+
+```bash
 python simulation.py
+python renderer.py
 ```
