@@ -3,3 +3,4 @@ pydot
 graphviz
 PySDL3
 Box2D
+redis
