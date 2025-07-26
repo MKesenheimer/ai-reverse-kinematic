@@ -101,6 +101,10 @@ class RobotState():
     def get_top_arm1(self):
         return (self.data.get('top_x_arm1'), self.data.get('top_y_arm1'))
 
+    def get_relative_top_arm1(self):
+        t = tuple(x - y for x, y in zip(self.get_top_arm1(), self.get_base_position_arm1()))
+        return (t[0], -t[1])
+
     # Arm2 definitions
     def set_base_position_arm2(self, position:tuple):
         self.data.set('base_x_arm2', position[0])
@@ -155,6 +159,10 @@ class RobotState():
     def get_top_arm2(self):
         return (self.data.get('top_x_arm2'), self.data.get('top_y_arm2'))
 
+    def get_relative_top_arm2(self):
+        t = tuple(x - y for x, y in zip(self.get_top_arm2(), self.get_base_position_arm1()))
+        return (t[0], -t[1])
+
     # Arm3 definitions
     def set_base_position_arm3(self, position:tuple):
         self.data.set('base_x_arm3', position[0])
@@ -204,3 +212,7 @@ class RobotState():
 
     def get_top_arm3(self):
         return (self.data.get('top_x_arm3'), self.data.get('top_y_arm3'))
+
+    def get_relative_top_arm3(self):
+        t = tuple(x - y for x, y in zip(self.get_top_arm3(), self.get_base_position_arm1()))
+        return (t[0], -t[1])
