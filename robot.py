@@ -13,31 +13,30 @@ def singleton(class_):
 class data_class():
     def __init__(self):
         self.vars = {}
+        self.redis_available = False
         try:
             # start redis via docker:
             # docker run --rm --name redis -p 6379:6379 -v "$(pwd)/redis:/data" -d redis redis-server --save 60 1 --loglevel warning
             self.r = redis.Redis(host='localhost', port=6379, db=0)
             self.r.set('redis', 'init')
+            self.redis_available = True
         except Exception as _:
             print("Warning: Redis not available. Using local data class. Communication with other processes will not work.")
 
     def set(self, key:str, value):
         self.vars[key] = value
-        try:
+        if self.redis_available:
             self.r.set(key, value)
-        except Exception as _:
-            #print("Warning: Redis not available. Using local data class. Communication with other processes will not work.")
-            pass
 
     def get(self, key:str, type=float):
-        try:
+        if self.redis_available:
             if self.r.get(key) is None:
                 self.r.set(key, 0)
             return type(self.r.get(key))
-        except Exception as _:
+        else:
             try:
                 return type(self.vars[key])
-            except Exception as _:
+            except KeyError:
                 self.vars[key] = 0
                 return type(self.vars[key])
 
