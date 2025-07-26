@@ -1,5 +1,4 @@
 import ctypes
-import math
 import os
 
 from Box2D import (b2_dynamicBody, b2BodyDef, b2CircleShape, b2FixtureDef, b2PolygonShape, b2Vec2, b2World)
@@ -28,7 +27,7 @@ def SDL_AppInit(appstate, argc, argv):
     if not sdl3.SDL_Init(sdl3.SDL_INIT_VIDEO):
         sdl3.SDL_Log("Couldn't initialize SDL: %s".encode() % sdl3.SDL_GetError())
         return sdl3.SDL_APP_FAILURE
-    windowTitle = "Draw Box2D colliders using line segments, PySDL3".encode()
+    windowTitle = "Robot Arm Renderer".encode()
     if not sdl3.SDL_CreateWindowAndRenderer(windowTitle, 500, 300, 0, window, renderer):
         sdl3.SDL_Log("Couldn't create window/renderer: %s".encode() % sdl3.SDL_GetError())
         return sdl3.SDL_APP_FAILURE
@@ -59,7 +58,7 @@ def SDL_AppInit(appstate, argc, argv):
     robotArm1Def.allowSleep = False
     robotArm1Def.position = b2Vec2(robotArm1_x / ppm, robotArm1_y / ppm)
     robotArm1Def.angle = robotArm1_angle
-    #robotArm1Def.type = b2_dynamicBody
+    robotArm1Def.type = b2_dynamicBody
     robotArm1 = world.CreateBody(robotArm1Def)
     robotArm1Shape = b2PolygonShape()
     robotArm1Shape.SetAsBox(10 / 2 / ppm, robotArm1_length / 2 / ppm)
@@ -77,7 +76,7 @@ def SDL_AppInit(appstate, argc, argv):
     robotArm2Def.allowSleep = False
     robotArm2Def.position = b2Vec2(robotArm2_x / ppm, robotArm2_y / ppm)
     robotArm2Def.angle = robotArm2_angle
-    #robotArm2Def.type = b2_dynamicBody
+    robotArm2Def.type = b2_dynamicBody
     robotArm2 = world.CreateBody(robotArm2Def)
     robotArm2Shape = b2PolygonShape()
     robotArm2Shape.SetAsBox(10 / 2 / ppm, robotArm2_length / 2 / ppm)
@@ -95,7 +94,7 @@ def SDL_AppInit(appstate, argc, argv):
     robotArm3Def.allowSleep = False
     robotArm3Def.position = b2Vec2(robotArm3_x / ppm, robotArm3_y / ppm)
     robotArm3Def.angle = robotArm3_angle
-    #robotArm3Def.type = b2_dynamicBody
+    robotArm3Def.type = b2_dynamicBody
     robotArm3 = world.CreateBody(robotArm3Def)
     robotArm3Shape = b2PolygonShape()
     robotArm3Shape.SetAsBox(10 / 2 / ppm, robotArm3_length / 2 / ppm)
