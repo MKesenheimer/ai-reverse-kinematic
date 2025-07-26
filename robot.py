@@ -26,7 +26,8 @@ class data_class():
         try:
             self.r.set(key, value)
         except Exception as _:
-            print("Warning: Redis not available. Using local data class. Communication with other processes will not work.")
+            #print("Warning: Redis not available. Using local data class. Communication with other processes will not work.")
+            pass
 
     def get(self, key:str, type=float):
         try:
