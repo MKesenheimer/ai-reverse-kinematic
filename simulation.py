@@ -34,10 +34,6 @@ robotState.set_length_arm3(50)
 robotState.set_angle_arm3(0)
 max_length = robotState.get_length_arm1() + robotState.get_length_arm2() + robotState.get_length_arm3()
 
-# Test: Update den Winkel des Roboterarms:
-y1_top = 0
-y2_top = 0
-y3_top = 0
 
 scale = 2
 train_list_alpha = []
@@ -50,8 +46,8 @@ for angle1 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
             robotState.set_angle_arm2(angle2)
             robotState.set_angle_arm3(angle3)
 
-            #x1_top, y1_top = robotState.get_relative_top_arm1()
-            #x2_top, y2_top = robotState.get_relative_top_arm2()
+            x1_top, y1_top = robotState.get_relative_top_arm1()
+            x2_top, y2_top = robotState.get_relative_top_arm2()
             x3_top, y3_top = robotState.get_relative_top_arm3()
 
             if y1_top >= 0 and y2_top >= 0 and y3_top >= 0:
