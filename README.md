@@ -1,6 +1,6 @@
 # Training eines Roboterarms über ein Neuronales Netzwerk
 
-## Git Kurzanleitung:
+## Git Kurzanleitung
 
 Projekt kopieren:
 
