@@ -34,6 +34,10 @@ robotState.set_length_arm3(50)
 robotState.set_angle_arm3(0)
 max_length = robotState.get_length_arm1() + robotState.get_length_arm2() + robotState.get_length_arm3()
 
+# Test: Update den Winkel des Roboterarms:
+y1_top = 0
+y2_top = 0
+y3_top = 0
 
 scale = 2
 train_list_alpha = []
@@ -42,6 +46,7 @@ train_list_coord = []
 for angle1 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
     for angle2 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
         for angle3 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
+            print(f"alpha = {angle1}, {angle2}, {angle3}")
             robotState.set_angle_arm1(angle1)
             robotState.set_angle_arm2(angle2)
             robotState.set_angle_arm3(angle3)
@@ -51,26 +56,22 @@ for angle1 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
             x3_top, y3_top = robotState.get_relative_top_arm3()
 
             if y1_top >= 0 and y2_top >= 0 and y3_top >= 0:
-                print("Fertig: " + str(len(train_list_alpha)) + f" alpha = ({angle1:.1f}, {angle2:.1f}, {angle3:.1f}), (x, y) = ({x3_top:.1f}, {y3_top:.1f})")
+                print(f" {len(train_list_alpha)} -> alpha = ({angle1:.1f}, {angle2:.1f}, {angle3:.1f}), (x, y) = ({x3_top:.1f}, {y3_top:.1f})")
                 # Skaliere die Winkel auf den Bereich [0, 1]
-                angle1 = scale_angle_to_knn(angle1)
-                angle2 = scale_angle_to_knn(angle2)
-                angle3 = scale_angle_to_knn(angle3)
-                train_list_alpha.extend([(angle1, angle2, angle3)])
+                angle1_scaled = scale_angle_to_knn(angle1)
+                angle2_scaled = scale_angle_to_knn(angle2)
+                angle3_scaled = scale_angle_to_knn(angle3)
+                train_list_alpha.extend([(angle1_scaled, angle2_scaled, angle3_scaled)])
                 # Skaliere die Koordinaten auf den Bereich [0, 1]
-                x3_top = scale_coord_to_knn(x3_top, max_length)
-                y3_top = scale_coord_to_knn(y3_top, max_length)
-                train_list_coord.extend([(x3_top, y3_top)])
+                x3_top_scaled = scale_coord_to_knn(x3_top, max_length)
+                y3_top_scaled = scale_coord_to_knn(y3_top, max_length)
+                train_list_coord.extend([(x3_top_scaled, y3_top_scaled)])
             else:
-                print("Fertig: " + str(len(train_list_alpha)) + " der arm ist im boden!")
+                print(f" {len(train_list_alpha)} -> der arm ist im boden!")
 
 
 train_list_alpha = np.array(train_list_alpha)
 train_list_coord = np.array(train_list_coord)
-
-#print(train_list_alpha)
-#print(train_list_coord)
-#sys.exit()
 
 # Bereite das neuronale Netz vor
 if tf.config.list_physical_devices('GPU'):
@@ -98,25 +99,27 @@ model.summary()
 model.fit(train_list_coord, train_list_alpha, epochs=2000) # (49.1, 21.0, 74.2), (x, y) = (-34.6, 128.0)
 
 while True:
-    X = float(input("X-Position eingeben: "))
-    Y = float(input("Y-Position eingeben: "))
-    print("\n(KNN) Koordinaten: X" + str(X) + " Y" + str(Y))
-    
-    X = scale_coord_to_knn(X, max_length)
-    Y = scale_coord_to_knn(Y, max_length)
-    test_x_y = np.array([[ X, Y ]])
+    try:
+        X = float(input("X-Position eingeben: "))
+        Y = float(input("Y-Position eingeben: "))
+        print("\n(KNN) Koordinaten: X" + str(X) + " Y" + str(Y))
 
-    alpha_bestimmt = model.predict(test_x_y)
-    angle1, angle2, angle3 = alpha_bestimmt[0]
-    angle1 = scale_knn_to_angle(angle1)
-    angle2 = scale_knn_to_angle(angle2)
-    angle3 = scale_knn_to_angle(angle3)
+        X = scale_coord_to_knn(X, max_length)
+        Y = scale_coord_to_knn(Y, max_length)
+        test_x_y = np.array([[ X, Y ]])
 
-    robotState.set_angle_arm1(angle1)
-    robotState.set_angle_arm2(angle2)
-    robotState.set_angle_arm3(angle3)
-    x3_top, y3_top = robotState.get_relative_top_arm3()
+        alpha_bestimmt = model.predict(test_x_y)
+        angle1, angle2, angle3 = alpha_bestimmt[0]
+        angle1 = scale_knn_to_angle(angle1)
+        angle2 = scale_knn_to_angle(angle2)
+        angle3 = scale_knn_to_angle(angle3)
 
-    print("\n(KNN) Berchnete Winkel: " + str(alpha_bestimmt))
-    print("kontrole : " + str(robotState.get_relative_top_arm3()))
-    
+        robotState.set_angle_arm1(angle1)
+        robotState.set_angle_arm2(angle2)
+        robotState.set_angle_arm3(angle3)
+        x3_top, y3_top = robotState.get_relative_top_arm3()
+
+        print("\n(KNN) Berchnete Winkel: " + str(alpha_bestimmt))
+        print("kontrole : " + str(robotState.get_relative_top_arm3()))
+    except ValueError:
+        print("Keine gültige Position. Erneut versuchen.")
