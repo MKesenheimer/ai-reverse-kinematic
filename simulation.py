@@ -5,6 +5,7 @@ from tensorflow.keras import layers
 from robot import RobotState
 import math
 import sys
+import time
 
 # Skaliere den Winkelbereich [0, 2 Pi] -> [0, 1]
 def scale_angle_to_knn(alpha):
@@ -50,6 +51,7 @@ for angle1 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
             robotState.set_angle_arm1(angle1)
             robotState.set_angle_arm2(angle2)
             robotState.set_angle_arm3(angle3)
+            #time.sleep(0.1)
 
             x1_top, y1_top = robotState.get_relative_top_arm1()
             x2_top, y2_top = robotState.get_relative_top_arm2()
