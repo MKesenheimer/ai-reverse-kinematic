@@ -24,6 +24,7 @@ def scale_coord_to_knn(coord, max_length):
 def scale_knn_to_coord(coord0, max_length):
     return coord0 * max_length
 
+# Initialisiere den Roboterarm
 robotState = RobotState()
 robotState.set_length_arm1(120)
 robotState.set_base_position_arm1((200, 250))
@@ -37,10 +38,6 @@ robotState.set_angle_arm3(0)
 max_length = robotState.get_length_arm1() + robotState.get_length_arm2() + robotState.get_length_arm3()
 
 # Generiere den Datensatz für das Training des Roboterarms
-y1_top = 0
-y2_top = 0
-y3_top = 0
-
 scale = 2
 train_list_alpha = []
 train_list_coord = []
@@ -71,6 +68,7 @@ for angle1 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
             else:
                 print(f" {len(train_list_alpha)} -> der arm ist im boden!")
 
+# Datensätze für das Training
 train_list_alpha = np.array(train_list_alpha)
 train_list_coord = np.array(train_list_coord)
 
@@ -89,8 +87,8 @@ class mixture_density_network():
         self.num_components = 2
         self.num_epochs = num_epochs
 
-    # Loss function
-    def nll_loss(self, y_true, params):
+    def build_gmm(self, params):
+        # Unpack params (same as in loss)
         loc_end = self.num_components * self.output_dim
         scale_end = loc_end + self.num_components * self.output_dim
         logits_end = scale_end + self.num_components
@@ -99,11 +97,17 @@ class mixture_density_network():
         scale = tf.nn.softplus(tf.reshape(params[..., loc_end:scale_end], [-1, self.num_components, self.output_dim]))
         logits = tf.reshape(params[..., scale_end:logits_end], [-1, self.num_components])
 
+        # Build GMM
         mvn = tfp.distributions.MultivariateNormalDiag(loc=loc, scale_diag=scale)
         gmm = tfp.distributions.MixtureSameFamily(
             mixture_distribution=tfp.distributions.Categorical(logits=logits),
             components_distribution=mvn
         )
+        return gmm
+
+    # Loss function
+    def nll_loss(self, y_true, params):
+        gmm = self.build_gmm(params)
         return -gmm.log_prob(y_true)
 
     def train(self, training_set_in, training_set_out):
@@ -124,21 +128,7 @@ class mixture_density_network():
         return model
 
     def sample_from_output(self, params, num_samples=1):
-        # Unpack params (same as in loss)
-        loc_end = self.num_components * self.output_dim
-        scale_end = loc_end + self.num_components * self.output_dim
-        logits_end = scale_end + self.num_components
-
-        loc = tf.reshape(params[..., :loc_end], [-1, self.num_components, self.output_dim])
-        scale = tf.nn.softplus(tf.reshape(params[..., loc_end:scale_end], [-1, self.num_components, self.output_dim]))
-        logits = tf.reshape(params[..., scale_end:logits_end], [-1, self.num_components])
-
-        # Build GMM
-        mvn = tfp.distributions.MultivariateNormalDiag(loc=loc, scale_diag=scale)
-        gmm = tfp.distributions.MixtureSameFamily(
-            mixture_distribution=tfp.distributions.Categorical(logits=logits),
-            components_distribution=mvn
-        )
+        gmm = self.build_gmm(params)
 
         # Sample outputs
         samples = gmm.sample(num_samples)  # Shape: [num_samples, batch_size, output_dim]

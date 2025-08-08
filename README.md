@@ -56,6 +56,10 @@ git reset --hard <commit-hash>
 Linux / Unix:
 
 ```bash
+yay -S python311
+```
+
+```bash
 cd ai-reverse-kinematic
 python3.11 -m venv venv
 source venv/bin/activate
