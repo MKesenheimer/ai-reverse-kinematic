@@ -36,7 +36,7 @@ robotState.set_length_arm3(50)
 robotState.set_angle_arm3(0)
 max_length = robotState.get_length_arm1() + robotState.get_length_arm2() + robotState.get_length_arm3()
 
-# Test: Update den Winkel des Roboterarms:
+# Generiere den Datensatz für das Training des Roboterarms
 y1_top = 0
 y2_top = 0
 y3_top = 0
@@ -44,7 +44,6 @@ y3_top = 0
 scale = 2
 train_list_alpha = []
 train_list_coord = []
-#for angle1 in range(-3, 3+1, 1):
 for angle1 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
     for angle2 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
         for angle3 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
@@ -72,7 +71,6 @@ for angle1 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
             else:
                 print(f" {len(train_list_alpha)} -> der arm ist im boden!")
 
-
 train_list_alpha = np.array(train_list_alpha)
 train_list_coord = np.array(train_list_coord)
 
@@ -82,60 +80,106 @@ if tf.config.list_physical_devices('GPU'):
 else:
   print("TensorFlow **IS NOT** using the GPU")
 
+## define mixture density model for non-bijective data sets
+class mixture_density_network():
+    def __init__(self, input_dim, output_dim, num_epochs):
+        # model parameters
+        self.input_dim = input_dim
+        self.output_dim = output_dim
+        self.num_components = 2
+        self.num_epochs = num_epochs
 
+    # Loss function
+    def nll_loss(self, y_true, params):
+        loc_end = self.num_components * self.output_dim
+        scale_end = loc_end + self.num_components * self.output_dim
+        logits_end = scale_end + self.num_components
 
-# Mixture model setup
-num_components = 3
-output_dim = 3
+        loc = tf.reshape(params[..., :loc_end], [-1, self.num_components, self.output_dim])
+        scale = tf.nn.softplus(tf.reshape(params[..., loc_end:scale_end], [-1, self.num_components, self.output_dim]))
+        logits = tf.reshape(params[..., scale_end:logits_end], [-1, self.num_components])
 
-def mdn_output(params):
-    loc = params[..., :num_components * output_dim]
-    scale = tf.nn.softplus(params[..., num_components * output_dim:-num_components])
-    mix_logits = params[..., -num_components:]
+        mvn = tfp.distributions.MultivariateNormalDiag(loc=loc, scale_diag=scale)
+        gmm = tfp.distributions.MixtureSameFamily(
+            mixture_distribution=tfp.distributions.Categorical(logits=logits),
+            components_distribution=mvn
+        )
+        return -gmm.log_prob(y_true)
 
-    loc = tf.reshape(loc, [-1, num_components, output_dim])
-    scale = tf.reshape(scale, [-1, num_components, output_dim])
+    def train(self, training_set_in, training_set_out):
+        # Model definition
+        inputs = tf.keras.Input(shape=(self.input_dim,))
+        x = tf.keras.layers.Dense(64, activation='relu')(inputs)
+        x = tf.keras.layers.Dense(64, activation='relu')(x)
 
-    mvn = tfp.distributions.MultivariateNormalDiag(loc=loc, scale_diag=scale)
-    mix = tfp.distributions.Categorical(logits=mix_logits)
-    gmm = tfp.distributions.MixtureSameFamily(mixture_distribution=mix, components_distribution=mvn)
-    return gmm
+        # Each component has: loc (3), scale (3), + logits (1)
+        # Total: num_components * (loc + scale) + logits
+        param_size = self.num_components * (2 * self.output_dim) + self.num_components
+        params = tf.keras.layers.Dense(param_size)(x)
+        model = tf.keras.Model(inputs=inputs, outputs=params)
 
-def nll_loss(y_true, gmm):
-    return -gmm.log_prob(y_true)
+        # Compile and train
+        model.compile(optimizer='adam', loss=self.nll_loss)
+        model.fit(training_set_in, training_set_out, epochs=self.num_epochs, batch_size=2)
+        return model
 
-# Build model
-inputs = tf.keras.Input(shape=(2,))
-x = tf.keras.layers.Dense(64, activation='relu')(inputs)
-x = tf.keras.layers.Dense(64, activation='relu')(x)
-params = tf.keras.layers.Dense((num_components * (output_dim + 1)) + num_components)(x)  # loc + scale + mix
+    def sample_from_output(self, params, num_samples=1):
+        # Unpack params (same as in loss)
+        loc_end = self.num_components * self.output_dim
+        scale_end = loc_end + self.num_components * self.output_dim
+        logits_end = scale_end + self.num_components
 
-gmm = tf.keras.layers.Lambda(mdn_output)(params)
+        loc = tf.reshape(params[..., :loc_end], [-1, self.num_components, self.output_dim])
+        scale = tf.nn.softplus(tf.reshape(params[..., loc_end:scale_end], [-1, self.num_components, self.output_dim]))
+        logits = tf.reshape(params[..., scale_end:logits_end], [-1, self.num_components])
 
-model = tf.keras.Model(inputs=inputs, outputs=gmm)
-model.add_loss(nll_loss(tf.keras.Input(shape=(output_dim,)), gmm))
-model.compile(optimizer='adam')
+        # Build GMM
+        mvn = tfp.distributions.MultivariateNormalDiag(loc=loc, scale_diag=scale)
+        gmm = tfp.distributions.MixtureSameFamily(
+            mixture_distribution=tfp.distributions.Categorical(logits=logits),
+            components_distribution=mvn
+        )
 
-model.fit(train_list_coord, train_list_alpha, epochs=2000)
+        # Sample outputs
+        samples = gmm.sample(num_samples)  # Shape: [num_samples, batch_size, output_dim]
+        return samples.numpy()
 
 ## define Sequential model with 3 layers
-#model = keras.Sequential(
-#    [
-#        layers.Dense(32, activation="relu", name="layer1", input_shape=(2,)),
-#        layers.Dense(16, activation="relu", name="layer2"),
-#        layers.Dense(3, activation='linear', name="layer3"),
-#    ]
-#)
-#
-## compile
-#model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
-#
-## summary
-#model.summary()
-##keras.utils.plot_model(model, "my_first_model_with_shape_info_test.png", show_shapes=True)
-#
-## Trainiere das Modell auf die generierte Liste
-#model.fit(train_list_coord, train_list_alpha, epochs=2000) # (49.1, 21.0, 74.2), (x, y) = (-34.6, 128.0)
+class sequential_network():
+    def __init__(self, input_dim, output_dim, num_epochs):
+        # model parameters
+        self.input_dim = input_dim
+        self.output_dim = output_dim
+        self.num_epochs = num_epochs
+
+    def train(self, training_set_in, training_set_out):
+        model = keras.Sequential(
+            [
+                layers.Dense(32, activation="relu", name="layer1", input_shape=(self.input_dim,)),
+                layers.Dense(16, activation="relu", name="layer2"),
+                layers.Dense(self.output_dim, activation='linear', name="layer3"),
+            ]
+        )
+
+        # compile
+        model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+
+        # summary
+        #model.summary()
+        #keras.utils.plot_model(model, "my_first_model_with_shape_info_test.png", show_shapes=True)
+
+        # Trainiere das Modell auf die generierte Liste
+        model.fit(training_set_in, training_set_out, epochs=self.num_epochs, batch_size=2) # (49.1, 21.0, 74.2), (x, y) = (-34.6, 128.0)
+        return model
+
+    def sample_from_output(self, params, num_samples=1):
+        print(params)
+        return [params]
+
+# train model
+network = mixture_density_network(input_dim=2, output_dim=3, num_epochs=2000)
+#network = sequential_network(input_dim=2, output_dim=3, num_epochs=2000)
+model = network.train(train_list_coord, train_list_alpha)
 
 while True:
     try:
@@ -146,19 +190,24 @@ while True:
         X = scale_coord_to_knn(X, max_length)
         Y = scale_coord_to_knn(Y, max_length)
         test_x_y = np.array([[ X, Y ]])
+        # Get model output parameters
+        params = model.predict(test_x_y)  # shape: [1, param_size]
+        alpha_bestimmt = network.sample_from_output(params, num_samples=5)
+        print("Sampled outputs:\n", alpha_bestimmt)
 
-        alpha_bestimmt = model.predict(test_x_y)
-        angle1, angle2, angle3 = alpha_bestimmt[0]
-        angle1 = scale_knn_to_angle(angle1)
-        angle2 = scale_knn_to_angle(angle2)
-        angle3 = scale_knn_to_angle(angle3)
+        for alphas in alpha_bestimmt:
+            angle1, angle2, angle3 = alphas[0]
+            angle1 = scale_knn_to_angle(angle1)
+            angle2 = scale_knn_to_angle(angle2)
+            angle3 = scale_knn_to_angle(angle3)
 
-        robotState.set_angle_arm1(angle1)
-        robotState.set_angle_arm2(angle2)
-        robotState.set_angle_arm3(angle3)
-        x3_top, y3_top = robotState.get_relative_top_arm3()
+            robotState.set_angle_arm1(angle1)
+            robotState.set_angle_arm2(angle2)
+            robotState.set_angle_arm3(angle3)
+            x3_top, y3_top = robotState.get_relative_top_arm3()
 
-        print("\n(KNN) Berchnete Winkel: " + str(alpha_bestimmt))
-        print("kontrole : " + str(robotState.get_relative_top_arm3()))
-    except ValueError:
+            print(f"\n(KNN) Berchnete Winkel: {angle1, angle2, angle3}")
+            print("kontrole : " + str(robotState.get_relative_top_arm3()))
+    except ValueError as e:
         print("Keine gültige Position. Erneut versuchen.")
+        print(e)
