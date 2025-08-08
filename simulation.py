@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+import tensorflow_probability as tfp
 from robot import RobotState
 import math
 import sys
@@ -81,24 +82,60 @@ if tf.config.list_physical_devices('GPU'):
 else:
   print("TensorFlow **IS NOT** using the GPU")
 
-# define Sequential model with 3 layers
-model = keras.Sequential(
-    [
-        layers.Dense(32, activation="relu", name="layer1", input_shape=(2,)),
-        layers.Dense(16, activation="relu", name="layer2"),
-        layers.Dense(3, activation='linear', name="layer3"),
-    ]
-)
 
-# compile
-model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
 
-# summary
-model.summary()
-#keras.utils.plot_model(model, "my_first_model_with_shape_info_test.png", show_shapes=True)
+# Mixture model setup
+num_components = 3
+output_dim = 3
 
-# Trainiere das Modell auf die generierte Liste
-model.fit(train_list_coord, train_list_alpha, epochs=2000) # (49.1, 21.0, 74.2), (x, y) = (-34.6, 128.0)
+def mdn_output(params):
+    loc = params[..., :num_components * output_dim]
+    scale = tf.nn.softplus(params[..., num_components * output_dim:-num_components])
+    mix_logits = params[..., -num_components:]
+
+    loc = tf.reshape(loc, [-1, num_components, output_dim])
+    scale = tf.reshape(scale, [-1, num_components, output_dim])
+
+    mvn = tfp.distributions.MultivariateNormalDiag(loc=loc, scale_diag=scale)
+    mix = tfp.distributions.Categorical(logits=mix_logits)
+    gmm = tfp.distributions.MixtureSameFamily(mixture_distribution=mix, components_distribution=mvn)
+    return gmm
+
+def nll_loss(y_true, gmm):
+    return -gmm.log_prob(y_true)
+
+# Build model
+inputs = tf.keras.Input(shape=(2,))
+x = tf.keras.layers.Dense(64, activation='relu')(inputs)
+x = tf.keras.layers.Dense(64, activation='relu')(x)
+params = tf.keras.layers.Dense((num_components * (output_dim + 1)) + num_components)(x)  # loc + scale + mix
+
+gmm = tf.keras.layers.Lambda(mdn_output)(params)
+
+model = tf.keras.Model(inputs=inputs, outputs=gmm)
+model.add_loss(nll_loss(tf.keras.Input(shape=(output_dim,)), gmm))
+model.compile(optimizer='adam')
+
+model.fit(train_list_coord, train_list_alpha, epochs=2000)
+
+## define Sequential model with 3 layers
+#model = keras.Sequential(
+#    [
+#        layers.Dense(32, activation="relu", name="layer1", input_shape=(2,)),
+#        layers.Dense(16, activation="relu", name="layer2"),
+#        layers.Dense(3, activation='linear', name="layer3"),
+#    ]
+#)
+#
+## compile
+#model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+#
+## summary
+#model.summary()
+##keras.utils.plot_model(model, "my_first_model_with_shape_info_test.png", show_shapes=True)
+#
+## Trainiere das Modell auf die generierte Liste
+#model.fit(train_list_coord, train_list_alpha, epochs=2000) # (49.1, 21.0, 74.2), (x, y) = (-34.6, 128.0)
 
 while True:
     try:
