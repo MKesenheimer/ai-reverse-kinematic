@@ -1,0 +1,44 @@
+roboterarm bese {
+1x kugellager 5x16x5
+1x kugellager 60x78x10
+5mm steel rod 22mm lang
+Stahl BBS 4,5mm
+1x AS5600 Sensor (Unten verlinkt)
+}
+
+gelenk 1 {
+2x kugellager 50x65x7
+4x kugellager 20x32x7
+5mm steel rod 280mm lang
+1x AS5600 Sensor (Unten verlinkt)
+}
+
+gelenk 2 {
+2x kugellager 50x65x7
+4x kugellager 20x32x7
+5mm steel rod 280mm lang
+1x AS5600 Sensor (Unten verlinkt)
+}
+
+Endeffektor {
+PTFE-Schlauch für 3D-Drucker-Filament 2mm Innen 4mm Außen 3m lang
+4x kugellager 30x42x7
+2x kugellager 20x32x7
+3x AS5600 Sensor (Unten verlinkt)
+}
+
+Zusammenfassung { 
+4x kugellager 50x65x7
+10x kugellager 20x32x7
+1x kugellager 5x16x5
+1x kugellager 60x78x10
+4x kugellager 30x42x7
+5mm steel rod 582mm lang 
+Stahl BBS 4,5mm
+6x AS5600 Sensor (Unten verlinkt)
+PTFE-Schlauch für 3D-Drucker-Filament 2mm Innen 4mm Außen 3m lang
+}
+
+verlinkte Teile {
+AS5600 Sensor "https://www.amazon.de/-/en/Precision-AS5600-Magnetic-Encoder-Induction/dp/B0D4YW7NVB/ref=pd_sbs_d_sccl_1_1/262-3437096-9351207?pd_rd_w=lK4jw&content-id=amzn1.sym.dbac70a2-92ad-4af7-93ba-377689664ce4&pf_rd_p=dbac70a2-92ad-4af7-93ba-377689664ce4&pf_rd_r=XQ3BHA6XN3ZA5XK41P2M&pd_rd_wg=mxyn6&pd_rd_r=18d38ad2-0b3a-4864-9014-99b6d1ff1a81&pd_rd_i=B0D4YW7NVB&psc=1"
+}
