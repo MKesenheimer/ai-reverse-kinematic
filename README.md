@@ -69,8 +69,7 @@ pip3 install -r requirements.txt
 
 Windows:
 ```bash
-python -m venv C:\Users\<username>\ai-reverse-kinematic\venv
-cd C:\Users\<username>\ai-reverse-kinematic
+python -m venv venv
 venv\Scripts\activate.bat
 python -m ensurepip --upgrade
 pip install -r requirements.txt

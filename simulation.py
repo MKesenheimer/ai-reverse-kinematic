@@ -68,8 +68,8 @@ train_list_alpha = np.array(train_list_alpha)
 train_list_coord = np.array(train_list_coord)
 
 # train model
-#network = mixture_density_network(input_dim=2, output_dim=3, num_epochs=10)
-network = sequential_network(input_dim=2, output_dim=3, num_epochs=10)
+network = mixture_density_network(input_dim=2, output_dim=3, num_epochs=2000)
+#network = sequential_network(input_dim=2, output_dim=3, num_epochs=100)
 model = network.train(train_list_coord, train_list_alpha)
 
 while True:
