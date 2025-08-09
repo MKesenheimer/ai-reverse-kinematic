@@ -12,6 +12,45 @@ if tf.config.list_physical_devices('GPU'):
 else:
   print("TensorFlow **IS NOT** using the GPU")
 
+def plot_history(history):
+    fig, ax1 = plt.subplots()
+
+    # First y-axis: accuracy
+    try:
+        ax1.plot(
+            range(len(history.history['accuracy'])),
+            history.history['accuracy'],
+            label="accuracy",
+            color="blue",
+            linewidth=2
+        )
+        ax1.set_ylabel("Accuracy", color="blue")
+    except KeyError:
+        pass
+
+    # Second y-axis: loss
+    ax2 = ax1.twinx()
+    ax2.plot(
+        range(len(history.history['loss'])),
+        history.history['loss'],
+        label="loss",
+        color="red",
+        linewidth=2
+    )
+    ax2.set_ylabel("Loss", color="red")
+
+    # Titles and labels
+    plt.title("KNN infos")
+    ax1.set_xlabel("Zeitlinie")
+
+    # Legends
+    ax1.legend(loc="upper left")
+    ax2.legend(loc="upper right")
+
+    # Grid and show
+    ax1.grid(True)
+    plt.show(block=False)
+
 ## define mixture density model for non-bijective data sets
 class mixture_density_network():
     def __init__(self, input_dim, output_dim, num_epochs):
@@ -48,7 +87,9 @@ class mixture_density_network():
         # Model definition
         inputs = tf.keras.Input(shape=(self.input_dim,))
         x = tf.keras.layers.Dense(64, activation='relu')(inputs)
-        x = tf.keras.layers.Dense(64, activation='relu')(x)
+        #x = tf.keras.layers.Dropout(0.05)(x)
+        x = tf.keras.layers.Dense(32, activation='relu')(x)
+        #x = tf.keras.layers.Dropout(0.05)(x)
 
         # Each component has: loc (3), scale (3), + logits (1)
         # Total: num_components * (loc + scale) + logits
@@ -57,8 +98,12 @@ class mixture_density_network():
         model = tf.keras.Model(inputs=inputs, outputs=params)
 
         # Compile and train
-        model.compile(optimizer='adam', loss=self.nll_loss)
-        model.fit(training_set_in, training_set_out, epochs=self.num_epochs, batch_size=2)
+        model.compile(optimizer='adam', loss=self.nll_loss, metrics=['accuracy'])
+        history = model.fit(training_set_in, training_set_out, epochs=self.num_epochs, batch_size=2)
+
+        # plotte die trainingsmetrik
+        plot_history(history=history)
+
         return model
 
     def sample_from_output(self, params, num_samples=1):
@@ -98,18 +143,8 @@ class sequential_network():
         # Trainiere das Modell auf die generierte Liste
         history = model.fit(training_set_in, training_set_out, epochs=self.num_epochs, batch_size=2) # (49.1, 21.0, 74.2), (x, y) = (-34.6, 128.0)
 
-        plt.plot(range(0, len(history.history['accuracy'])), history.history['accuracy'], label="accuracy", color="blue", linewidth=2)
-        plt.plot(range(0, len(history.history['loss'])), history.history['loss'], label="loss", color="red", linewidth=2)
-
-        # Diagramm beschriften
-        plt.title("KNN infos")
-        plt.xlabel("Zeitlinie")
-        plt.ylabel("y-Werte")
-        plt.legend()  # Legende einblenden
-        plt.grid(True)
-
-        # Diagramm anzeigen
-        plt.show()
+        # plotte die trainingsmetrik
+        plot_history(history=history)
 
         return model
 

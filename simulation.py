@@ -39,6 +39,8 @@ train_list_coord = []
 for angle1 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
     for angle2 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
         for angle3 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
+            #angle3 = angle1 + angle2
+            #angle3 = 0
             print(f"alpha = {angle1}, {angle2}, {angle3}")
             robotState.set_angle_arm1(angle1)
             robotState.set_angle_arm2(angle2)
@@ -68,8 +70,8 @@ train_list_alpha = np.array(train_list_alpha)
 train_list_coord = np.array(train_list_coord)
 
 # train model
-#network = mixture_density_network(input_dim=2, output_dim=3, num_epochs=10)
-network = sequential_network(input_dim=2, output_dim=3, num_epochs=10)
+#network = mixture_density_network(input_dim=2, output_dim=3, num_epochs=200)
+network = sequential_network(input_dim=2, output_dim=3, num_epochs=200)
 model = network.train(train_list_coord, train_list_alpha)
 
 while True:
