@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 import tensorflow_probability as tfp
+import matplotlib.pyplot as plt # Liniendiagramm
 
 if tf.config.list_physical_devices('GPU'):
   print("TensorFlow **IS** using the GPU")
@@ -62,7 +63,7 @@ class mixture_density_network():
 
         # Sample outputs
         samples = gmm.sample(num_samples)  # Shape: [num_samples, batch_size, output_dim]
-        return samples.numpy()
+        return [x[0] for x in samples.numpy()]
 
 ## define Sequential model with 3 layers
 class sequential_network():
@@ -75,23 +76,39 @@ class sequential_network():
     def train(self, training_set_in, training_set_out):
         model = keras.Sequential(
             [
-                layers.Dense(32, activation="relu", name="layer1", input_shape=(self.input_dim,)),
-                layers.Dense(16, activation="relu", name="layer2"),
+                layers.Dense(64, activation="relu", name="layer1", input_shape=(self.input_dim,)),
+                #layers.Dropout(0.05),
+                layers.Dense(32, activation="relu", name="layer2"),
+                #layers.Dropout(0.05),
                 layers.Dense(self.output_dim, activation='linear', name="layer3"),
             ]
         )
 
         # compile
-        model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+        #model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+        model.compile(optimizer='adam', loss='mean_absolute_percentage_error', metrics=['accuracy'])
 
         # summary
-        #model.summary()
+        model.summary()
         #keras.utils.plot_model(model, "my_first_model_with_shape_info_test.png", show_shapes=True)
 
         # Trainiere das Modell auf die generierte Liste
-        model.fit(training_set_in, training_set_out, epochs=self.num_epochs, batch_size=2) # (49.1, 21.0, 74.2), (x, y) = (-34.6, 128.0)
+        history = model.fit(training_set_in, training_set_out, epochs=self.num_epochs, batch_size=2) # (49.1, 21.0, 74.2), (x, y) = (-34.6, 128.0)
+
+        plt.plot(range(0, len(history.history['accuracy'])), history.history['accuracy'], label="accuracy", color="blue", linewidth=2)
+        plt.plot(range(0, len(history.history['loss'])), history.history['loss'], label="loss", color="red", linewidth=2)
+
+        # Diagramm beschriften
+        plt.title("KNN infos")
+        plt.xlabel("Zeitlinie")
+        plt.ylabel("y-Werte")
+        plt.legend()  # Legende einblenden
+        plt.grid(True)
+
+        # Diagramm anzeigen
+        plt.show()
+
         return model
 
     def sample_from_output(self, params, num_samples=1):
-        print(params)
-        return [params]
+        return params

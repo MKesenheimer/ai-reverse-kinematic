@@ -68,8 +68,8 @@ train_list_alpha = np.array(train_list_alpha)
 train_list_coord = np.array(train_list_coord)
 
 # train model
-network = mixture_density_network(input_dim=2, output_dim=3, num_epochs=2000)
-#network = sequential_network(input_dim=2, output_dim=3, num_epochs=2000)
+#network = mixture_density_network(input_dim=2, output_dim=3, num_epochs=10)
+network = sequential_network(input_dim=2, output_dim=3, num_epochs=10)
 model = network.train(train_list_coord, train_list_alpha)
 
 while True:
@@ -81,13 +81,17 @@ while True:
         X = scale_coord_to_knn(X, max_length)
         Y = scale_coord_to_knn(Y, max_length)
         test_x_y = np.array([[ X, Y ]])
+        print(f"(KNN) Koordinaten: {test_x_y}")
+
         # Get model output parameters
         params = model.predict(test_x_y)  # shape: [1, param_size]
         alpha_bestimmt = network.sample_from_output(params, num_samples=5)
+
+        print(f"Ausgabe KNN type: {type(alpha_bestimmt)}")
         print("Sampled outputs:\n", alpha_bestimmt)
 
         for alphas in alpha_bestimmt:
-            angle1, angle2, angle3 = alphas[0]
+            angle1, angle2, angle3 = alphas
             angle1 = scale_knn_to_angle(angle1)
             angle2 = scale_knn_to_angle(angle2)
             angle3 = scale_knn_to_angle(angle3)

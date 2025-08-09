@@ -1,5 +1,6 @@
 tensorflow==2.15
 tensorflow-probability==0.23.0
+matplotlib
 graphviz
 PySDL3
 Box2D
