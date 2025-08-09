@@ -1,7 +1,10 @@
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
-import tensorflow_probability as tfp
+try:
+    import tensorflow_probability as tfp
+except ImportError:
+    print("Warning: tensorflow-probability could not be imported.")
 import matplotlib.pyplot as plt # Liniendiagramm
 
 if tf.config.list_physical_devices('GPU'):
