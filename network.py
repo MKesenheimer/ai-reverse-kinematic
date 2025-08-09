@@ -84,7 +84,9 @@ class mixture_density_network():
         # Model definition
         inputs = tf.keras.Input(shape=(self.input_dim,))
         x = tf.keras.layers.Dense(64, activation='relu')(inputs)
+        #x = tf.keras.layers.Dropout(0.05)(x)
         x = tf.keras.layers.Dense(32, activation='relu')(x)
+        #x = tf.keras.layers.Dropout(0.05)(x)
 
         # Each component has: loc (3), scale (3), + logits (1)
         # Total: num_components * (loc + scale) + logits
@@ -93,7 +95,7 @@ class mixture_density_network():
         model = tf.keras.Model(inputs=inputs, outputs=params)
 
         # Compile and train
-        model.compile(optimizer='adam', loss=self.nll_loss)
+        model.compile(optimizer='adam', loss=self.nll_loss, metrics=['accuracy'])
         history = model.fit(training_set_in, training_set_out, epochs=self.num_epochs, batch_size=2)
 
         # plotte die trainingsmetrik
