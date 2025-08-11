@@ -52,7 +52,7 @@ def plot_history(history):
     plt.show(block=False)
 
 ## define mixture density model for non-bijective data sets
-class mixture_density_network():
+class MixtureDensityNetwork():
     def __init__(self, input_dim, output_dim, num_epochs):
         # model parameters
         self.input_dim = input_dim
@@ -114,7 +114,7 @@ class mixture_density_network():
         return [x[0] for x in samples.numpy()]
 
 ## define Sequential model with 3 layers
-class sequential_network():
+class SequentialNetwork():
     def __init__(self, input_dim, output_dim, num_epochs):
         # model parameters
         self.input_dim = input_dim
@@ -149,4 +149,5 @@ class sequential_network():
         return model
 
     def sample_from_output(self, params, num_samples=1):
+        # dummy function
         return params

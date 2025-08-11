@@ -1,6 +1,7 @@
 import numpy as np
 from robot import RobotState
-from network import mixture_density_network, sequential_network
+#from network import MixtureDensityNetwork, SequentialNetwork
+from torchnetwork import SequentialNetwork
 import math
 
 # Skaliere den Winkelbereich [0, 2 Pi] -> [0, 1]
@@ -39,6 +40,10 @@ train_list_coord = []
 for angle1 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
     for angle2 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
         for angle3 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
+            if angle3 >= math.pi - 0.1 and angle3 <= math.pi + 0.1:
+                print(f" {len(train_list_alpha)} -> arm berührt sich selbst.")
+                break
+
             #angle3 = angle1 + angle2
             #angle3 = 0
             print(f"alpha = {angle1}, {angle2}, {angle3}")
@@ -69,9 +74,13 @@ for angle1 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
 train_list_alpha = np.array(train_list_alpha)
 train_list_coord = np.array(train_list_coord)
 
-# train model
-#network = mixture_density_network(input_dim=2, output_dim=3, num_epochs=200)
-network = sequential_network(input_dim=2, output_dim=3, num_epochs=200)
+# train model - tensorflow
+#network = MixtureDensityNetwork(input_dim=2, output_dim=3, num_epochs=200)
+#network = SequentialNetwork(input_dim=2, output_dim=3, num_epochs=200)
+#model = network.train(train_list_coord, train_list_alpha)
+
+# train model - pytorch (with AMD GPU support)
+network = SequentialNetwork(input_dim=2, output_dim=3, num_epochs=200)
 model = network.train(train_list_coord, train_list_alpha)
 
 while True:
@@ -86,7 +95,7 @@ while True:
         print(f"(KNN) Koordinaten: {test_x_y}")
 
         # Get model output parameters
-        params = model.predict(test_x_y)  # shape: [1, param_size]
+        params = model.predict(test_x_y)
         alpha_bestimmt = network.sample_from_output(params, num_samples=5)
 
         print(f"Ausgabe KNN type: {type(alpha_bestimmt)}")
