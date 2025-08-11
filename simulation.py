@@ -1,6 +1,8 @@
 import numpy as np
 from robot import RobotState
+# based on tensorflow
 #from network import MixtureDensityNetwork, SequentialNetwork
+# based on pytorch (better AMD support)
 from torchnetwork import SequentialNetwork
 import math
 
@@ -96,7 +98,7 @@ while True:
 
         # Get model output parameters
         params = model.predict(test_x_y)
-        alpha_bestimmt = network.sample_from_output(params, num_samples=5)
+        alpha_bestimmt = network.sample_from_output(params)
 
         print(f"Ausgabe KNN type: {type(alpha_bestimmt)}")
         print("Sampled outputs:\n", alpha_bestimmt)
