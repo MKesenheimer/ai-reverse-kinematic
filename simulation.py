@@ -1,9 +1,9 @@
 import numpy as np
 from robot import RobotState
 # based on tensorflow
-#from network import MixtureDensityNetwork, SequentialNetwork
+from network import MixtureDensityNetwork, SequentialNetwork
 # based on pytorch (better AMD support)
-from torchnetwork import SequentialNetwork
+#from torchnetwork import SequentialNetwork
 import math
 
 # Skaliere den Winkelbereich [0, 2 Pi] -> [0, 1]
