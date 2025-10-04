@@ -5,7 +5,7 @@
 Projekt kopieren:
 
 ```bash
-git clone git@github.com:MKesenheimer/ai-reverse-kinematic.git
+git clone --recurse-submodules git@github.com:MKesenheimer/ai-reverse-kinematic.git
 ```
 
 Änderungen von github holen und lokale Version updaten:

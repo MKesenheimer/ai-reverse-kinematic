@@ -62,10 +62,10 @@ class RobotState():
         x1 = self.data.get('base_x_arm1')
         y1 = self.data.get('base_y_arm1')
         r = self.data.get('length_arm1') / 2
-        x = x1 + r * math.sin(angle1)
-        y = y1 - r * math.cos(angle1)
-        x2 = x1 + 2 * r * math.sin(angle1)
-        y2 = y1 - 2 * r * math.cos(angle1)
+        x = x1 + r * math.cos(angle1)
+        y = y1 + r * math.sin(angle1)
+        x2 = x1 + 2 * r * math.cos(angle1)
+        y2 = y1 + 2 * r * math.sin(angle1)
         self.data.set('mid_x_arm1', x)
         self.data.set('mid_y_arm1', y)
         self.data.set('top_x_arm1', x2)
@@ -81,6 +81,12 @@ class RobotState():
 
     def get_absolute_angle_arm1(self):
         return self.data.get('absolute_angle_arm1')
+
+    def get_x_base_arm1(self):
+        return self.data.get('base_x_arm1')
+
+    def get_y_base_arm1(self):
+        return self.data.get('base_y_arm1')
 
     def get_x_arm1(self):
         return self.data.get('mid_x_arm1')
@@ -102,7 +108,7 @@ class RobotState():
 
     def get_relative_top_arm1(self):
         t = tuple(x - y for x, y in zip(self.get_top_arm1(), self.get_base_position_arm1()))
-        return (t[0], -t[1])
+        return t
 
     # Arm2 definitions
     def set_base_position_arm2(self, position:tuple):
@@ -114,16 +120,18 @@ class RobotState():
 
     def set_angle_arm2(self, angle2:float):
         angle1 = self.get_angle_arm1()
-        abs_angle2 = angle1 + angle2
+        abs_angle2 = angle1 + angle2 - math.pi
         self.data.set('absolute_angle_arm2', abs_angle2)
         self.data.set('angle_arm2', angle2)
         x1 = self.data.get('base_x_arm2')
         y1 = self.data.get('base_y_arm2')
+        print(x1, y1)
+        print(angle1, angle2)
         r = self.data.get('length_arm2') / 2
-        x = x1 + r * math.sin(abs_angle2)
-        y = y1 - r * math.cos(abs_angle2)
-        x2 = x1 + 2 * r * math.sin(abs_angle2)
-        y2 = y1 - 2 * r * math.cos(abs_angle2)
+        x = x1 + r * math.cos(abs_angle2)
+        y = y1 + r * math.sin(abs_angle2)
+        x2 = x1 + 2 * r * math.cos(abs_angle2)
+        y2 = y1 + 2 * r * math.sin(abs_angle2)
         self.data.set('mid_x_arm2', x)
         self.data.set('mid_y_arm2', y)
         self.data.set('top_x_arm2', x2)
@@ -160,7 +168,7 @@ class RobotState():
 
     def get_relative_top_arm2(self):
         t = tuple(x - y for x, y in zip(self.get_top_arm2(), self.get_base_position_arm1()))
-        return (t[0], -t[1])
+        return t
 
     # Arm3 definitions
     def set_base_position_arm3(self, position:tuple):
@@ -174,15 +182,15 @@ class RobotState():
         angle1 = self.get_angle_arm1()
         angle2 = self.get_angle_arm2()
         abs_angle3 = angle1 + angle2 + angle3
-        self.data.set('absolute_angle_arm3',abs_angle3)
+        self.data.set('absolute_angle_arm3', abs_angle3)
         self.data.set('angle_arm3', angle3)
         x1 = self.data.get('base_x_arm3')
         y1 = self.data.get('base_y_arm3')
         r = self.data.get('length_arm3') / 2
-        x = x1 + r * math.sin(abs_angle3)
-        y = y1 - r * math.cos(abs_angle3)
-        x2 = x1 + 2 * r * math.sin(abs_angle3)
-        y2 = y1 - 2 * r * math.cos(abs_angle3)
+        x = x1 + r * math.cos(abs_angle3)
+        y = y1 + r * math.sin(abs_angle3)
+        x2 = x1 + 2 * r * math.cos(abs_angle3)
+        y2 = y1 + 2 * r * math.sin(abs_angle3)
         self.data.set('mid_x_arm3', x)
         self.data.set('mid_y_arm3', y)
         self.data.set('top_x_arm3', x2)
@@ -214,4 +222,4 @@ class RobotState():
 
     def get_relative_top_arm3(self):
         t = tuple(x - y for x, y in zip(self.get_top_arm3(), self.get_base_position_arm1()))
-        return (t[0], -t[1])
+        return t

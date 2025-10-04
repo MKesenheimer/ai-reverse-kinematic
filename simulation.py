@@ -25,14 +25,14 @@ def scale_knn_to_coord(coord0, max_length):
 # Initialisiere den Roboterarm
 robotState = RobotState()
 robotState.set_length_arm1(120)
-robotState.set_base_position_arm1((200, 250))
-robotState.set_angle_arm1(0)
+robotState.set_base_position_arm1((200, 0))
+robotState.set_angle_arm1(0.2)
 
 robotState.set_length_arm2(75)
-robotState.set_angle_arm2(0)
+robotState.set_angle_arm2(0.5)
 
 robotState.set_length_arm3(50)
-robotState.set_angle_arm3(0)
+robotState.set_angle_arm3(0.5)
 max_length = robotState.get_length_arm1() + robotState.get_length_arm2() + robotState.get_length_arm3()
 
 # Generiere den Datensatz für das Training des Roboterarms
@@ -42,12 +42,6 @@ train_list_coord = []
 for angle1 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
     for angle2 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
         for angle3 in [x / scale for x in range(0, int(2 * math.pi * scale + 1), 1)]:
-            if angle3 >= math.pi - 0.1 and angle3 <= math.pi + 0.1:
-                print(f" {len(train_list_alpha)} -> arm berührt sich selbst.")
-                break
-
-            #angle3 = angle1 + angle2
-            #angle3 = 0
             print(f"alpha = {angle1}, {angle2}, {angle3}")
             robotState.set_angle_arm1(angle1)
             robotState.set_angle_arm2(angle2)
