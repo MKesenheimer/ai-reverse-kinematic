@@ -7,7 +7,7 @@ Stahl BBS 4,5mm
 1x Nema 17 17HS4023
 }
 
-gelenk 1 {
+Schulter {
 2x kugellager 50x65x7
 4x kugellager 20x32x7
 5mm steel rod 280mm lang
@@ -16,7 +16,7 @@ gelenk 1 {
 1x Aluminiumröhre AD 35mm, ID 32mm, Länge 150mm
 }
 
-gelenk 2 {
+Ellenbogen {
 2x kugellager 50x65x7
 4x kugellager 20x32x7
 5mm steel rod 280mm lang
@@ -56,18 +56,16 @@ Zusammenfassung {
 Stahl BBS 4,5mm: https://www.amazon.de/Umarex-Luftgewehr-Kaliber-Luftdruck-Munition/dp/B0B5T4BQWD
 6x AS5600 Sensor: https://www.amazon.de/-/en/Precision-AS5600-Magnetic-Encoder-Induction/dp/B0D4YW7NVB
 PTFE-Schlauch für 3D-Drucker-Filament 2mm Innen 4mm Außen 3m lang: https://www.amazon.de/YUTOU-Schlauch-3D-Drucker-Teflon-Schlauch-Filament/dp/B0CZMBB5FQ
-
-
-- 6x Nema 17 17HS4023: https://www.amazon.de/MMOBIEL-Schrittmotor-Bipolar-17HS4023-18-4oz/dp/B09HQWW869/
-- 1x TCA9548A 1-to-8 I2C Multiplexer: https://www.amazon.de/GERUI-TCA9548A-Multiplexer-Breakout-Kommunikationsschalter/dp/B0F37Y8HWV/
-- 1x Aluminiumröhre 6063 AD 35mm, ID 32mm, Länge 300mm: https://www.amazon.de/sourcing-map-Durchmesser-Rohrleitung-Schläuche/dp/B0CFF6M9YX
-- 1x 3D Drucker Kit Mega 2560 R3 Entwicklungsboard + RAMPS 1.4 Controller + 5 Stück DRV8825 Schrittmotor Modul + Endstop 6pcs: https://www.amazon.de/RAMPS-LCD-3D-Drucker-Controller-MEGA2560-A4988-Kühlkörper-USB-Calbe-Jumper-Kit/dp/B092MQLLMV
-- xx M3 Schrauben Senkkopf: https://www.amazon.de/Senkkopfschrauben-Innensechskantschrauben-Maschinenschrauben-Zylinderschrauben-Gewindeschrauben/dp/B0F36DS8XC/
-- xx M3 Schrauben Flachkopf: https://www.amazon.de/Sechskantschrauben-Zylinderschrauben-Unterlegscheiben-Maschinenschrauben-Gewindeschrauben/dp/B0DPWZ53X4/
-- xx M3 Schrauben Linsenkopf: https://www.amazon.de/Innensechskantschrauben-Linsenkopfschrauben-Maschinenschrauben-Gewindeschrauben-Unterlegscheiben/dp/B0DPFMSZQL/
-- xx M3 Heat Inserts / Gewindeeinsätze: https://www.amazon.de/Gewindeeinsatz-Gewindebuchse-Einpressmuttern-Automobil-Kunststoffteile/dp/B0F23LZ1NF
-- xx Vierkantmuttern: Dicke 3mm, 6x6 mm, M3: https://www.amazon.de/INCREWAY-Edelstahl-Vierkantmuttern-Gewindemuttern-Maschinenschraubenbefestigungswerkzeug/dp/B07D8T13XV/
-- 3D Druck Filament, blau: https://www.amazon.de/GEEETECH-Filament-1-75mm-Drucker-Spool/dp/B07DZT5TQ1/
-- 3D Druck Filament, schwarz: https://www.amazon.de/GEEETECH-Filament-1-75mm-Drucker-Spool/dp/B075YHL7HQ/
-- 3D Druck Filament, gelb: https://www.amazon.de/GEEETECH-Filament-1-75mm-Drucker-Schwarz/dp/B071DM81ZK/
+6x Nema 17 17HS4023: https://www.amazon.de/MMOBIEL-Schrittmotor-Bipolar-17HS4023-18-4oz/dp/B09HQWW869/
+1x TCA9548A 1-to-8 I2C Multiplexer: https://www.amazon.de/GERUI-TCA9548A-Multiplexer-Breakout-Kommunikationsschalter/dp/B0F37Y8HWV/
+1x Aluminiumröhre 6063 AD 35mm, ID 32mm, Länge 300mm: https://www.amazon.de/sourcing-map-Durchmesser-Rohrleitung-Schläuche/dp/B0CFF6M9YX
+1x 3D Drucker Kit Mega 2560 R3 Entwicklungsboard + RAMPS 1.4 Controller + 5 Stück DRV8825 Schrittmotor Modul + Endstop 6pcs: https://www.amazon.de/RAMPS-LCD-3D-Drucker-Controller-MEGA2560-A4988-Kühlkörper-USB-Calbe-Jumper-Kit/dp/B092MQLLMV
+xx M3 Schrauben Senkkopf: https://www.amazon.de/Senkkopfschrauben-Innensechskantschrauben-Maschinenschrauben-Zylinderschrauben-Gewindeschrauben/dp/B0F36DS8XC/
+xx M3 Schrauben Flachkopf: https://www.amazon.de/Sechskantschrauben-Zylinderschrauben-Unterlegscheiben-Maschinenschrauben-Gewindeschrauben/dp/B0DPWZ53X4/
+xx M3 Schrauben Linsenkopf: https://www.amazon.de/Innensechskantschrauben-Linsenkopfschrauben-Maschinenschrauben-Gewindeschrauben-Unterlegscheiben/dp/B0DPFMSZQL/
+xx M3 Heat Inserts / Gewindeeinsätze: https://www.amazon.de/Gewindeeinsatz-Gewindebuchse-Einpressmuttern-Automobil-Kunststoffteile/dp/B0F23LZ1NF
+xx Vierkantmuttern: Dicke 3mm, 6x6 mm, M3: https://www.amazon.de/INCREWAY-Edelstahl-Vierkantmuttern-Gewindemuttern-Maschinenschraubenbefestigungswerkzeug/dp/B07D8T13XV/
+3D Druck Filament, blau: https://www.amazon.de/GEEETECH-Filament-1-75mm-Drucker-Spool/dp/B07DZT5TQ1/
+3D Druck Filament, schwarz: https://www.amazon.de/GEEETECH-Filament-1-75mm-Drucker-Spool/dp/B075YHL7HQ/
+3D Druck Filament, gelb: https://www.amazon.de/GEEETECH-Filament-1-75mm-Drucker-Schwarz/dp/B071DM81ZK/
 }
