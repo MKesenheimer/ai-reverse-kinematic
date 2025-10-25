@@ -120,7 +120,8 @@ while True:
             robotState.set_angle_in_grad_arm3(angle3)
             x3_top, y3_top = robotState.get_relative_top_arm3()
 
-            print(f"\n(KNN) Winkelvorhersage:       {float(angle1), float(angle2), float(angle3)} Grad")
+            print("\n")
+            print(f"(KNN) Winkelvorhersage:       {float(angle1), float(angle2), float(angle3)} Grad")
             print(f"(MOD) Kontrolle durch Modell: {x3_top, y3_top} cm")
     except ValueError as e:
         print("Keine gültige Position. Erneut versuchen.")
