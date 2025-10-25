@@ -106,7 +106,7 @@ class MixtureDensityNetwork():
 
         return model
 
-    def sample_from_output(self, params, num_samples=5):
+    def sample_from_output(self, params, num_samples=1):
         gmm = self.build_gmm(params)
 
         # Sample outputs

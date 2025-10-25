@@ -1,5 +1,6 @@
 import redis
 import math
+import functions
 
 # singleton decorator if needed
 def singleton(class_):
@@ -55,6 +56,10 @@ class RobotState():
 
     def set_length_arm1(self, length:float):
         self.data.set('length_arm1', length)
+
+    def set_angle_in_grad_arm1(self, angle1:float):
+        angle1 = functions.scale_grad_to_rad(angle1)
+        self.set_angle_arm1(angle1)
 
     def set_angle_arm1(self, angle1:float):
         self.data.set('angle_arm1', angle1)
@@ -118,6 +123,10 @@ class RobotState():
     def set_length_arm2(self, length:float):
         self.data.set('length_arm2', length)
 
+    def set_angle_in_grad_arm2(self, angle2:float):
+        angle2 = functions.scale_grad_to_rad(angle2)
+        self.set_angle_arm2(angle2)
+
     def set_angle_arm2(self, angle2:float):
         angle1 = self.get_angle_arm1()
         abs_angle2 = angle1 + angle2 - math.pi
@@ -177,6 +186,10 @@ class RobotState():
 
     def set_length_arm3(self, length:float):
         self.data.set('length_arm3', length)
+
+    def set_angle_in_grad_arm3(self, angle3:float):
+        angle3 = functions.scale_grad_to_rad(angle3)
+        self.set_angle_arm3(angle3)
 
     def set_angle_arm3(self, angle3:float):
         angle1 = self.get_angle_arm1()
