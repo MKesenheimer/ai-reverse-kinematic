@@ -1,5 +1,5 @@
 #tf_keras==2.12
-tensorflow==2.12
+tensorflow
 #tensorflow-probability==0.23.0
 matplotlib
 graphviz

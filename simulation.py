@@ -5,6 +5,7 @@ from network import MixtureDensityNetwork, SequentialNetwork
 # based on pytorch (better AMD support)
 #from torchnetwork import SequentialNetwork
 import functions
+import paper_model_data
 
 ##########################################################################################
 # Roboterarm initialisieren                                                              #
@@ -61,9 +62,11 @@ max_length = robotState.get_length_arm1() + robotState.get_length_arm2() + robot
 # Einheiten:
 # Winkel in Grad
 # Abstände in cm
-train_list_alpha = [[10., 20., 180.], [10., 25., 180.]]
-train_list_coord = [        [5., 3.],         [8., 9.]]
+train_list_alpha = paper_model_data.list_alpha
+train_list_coord = paper_model_data.list_coord
 
+print(train_list_alpha)
+print(train_list_coord)
 
 ##########################################################################################
 # Training des KNNs                                                                      #
