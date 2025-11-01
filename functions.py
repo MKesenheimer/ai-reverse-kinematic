@@ -35,7 +35,7 @@ def scale_angle_list_to_knn(alphas):
 def scale_knn_to_angle_list(alphas):
     for j in range(len(alphas)):
         for i in range(len(alphas[j])):
-            alphas[j][i] = scale_rad_to_grad(scale_knn_to_rad(alphas[j][i]))
+            alphas[j][i] = float(scale_rad_to_grad(scale_knn_to_rad(alphas[j][i])))
     return alphas
 
 # scale list of coordinates to knn values ([0, 1]) 
