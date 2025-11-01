@@ -6,20 +6,21 @@ from network import MixtureDensityNetwork, SequentialNetwork
 #from torchnetwork import SequentialNetwork
 import functions
 import paper_model_data
+import math
 
 ##########################################################################################
 # Roboterarm initialisieren                                                              #
 ##########################################################################################
 # TODO: Parameter des physikalischen Modells hier eintragen
 robotState = RobotState()
-robotState.set_length_arm1(120)
+robotState.set_length_arm1(7.0)
 robotState.set_base_position_arm1((200, 0))
 robotState.set_angle_in_grad_arm1(0.1)
 
-robotState.set_length_arm2(75)
+robotState.set_length_arm2(7.0)
 robotState.set_angle_in_grad_arm2(0.1)
 
-robotState.set_length_arm3(50)
+robotState.set_length_arm3(7.0)
 robotState.set_angle_in_grad_arm3(0.1)
 max_length = robotState.get_length_arm1() + robotState.get_length_arm2() + robotState.get_length_arm3()
 
@@ -90,30 +91,37 @@ train_list_coord = np.array(train_list_coord)
 #model = network.train(train_list_coord, train_list_alpha)
 
 # train model - sequential network
-network = SequentialNetwork(input_dim=2, output_dim=3, num_epochs=200)
+network = SequentialNetwork(input_dim=2, output_dim=3, num_epochs=1)
 model = network.train(train_list_coord, train_list_alpha)
 
 ##########################################################################################
 # Test des Trainings                                                                     #
 ##########################################################################################
+print("Hinweis zu den Koordinaten: x-y-Ebene auf dem Boden, z-Achse zeigt nach oben.")
 while True:
     try:
         # Benutzereingabe
         X = float(input("X-Position eingeben: "))
         Y = float(input("Y-Position eingeben: "))
-        print("\n(KNN) Koordinaten: X" + str(X) + " Y" + str(Y))
+        Z = float(input("Z-Position eingeben: "))
+        print(f"\n(KNN) Koordinaten: X{X} Y{Y} Z{Z}")
 
         # Koordinaten skalieren
-        X = functions.scale_coord_to_knn(X, max_length)
-        Y = functions.scale_coord_to_knn(Y, max_length)
-        test_x_y = np.array([[ X, Y ]])
-        print(f"(KNN) Koordinaten: {test_x_y}")
+        x = functions.scale_coord_to_knn(X, max_length)
+        y = functions.scale_coord_to_knn(Y, max_length)
+        z = functions.scale_coord_to_knn(Z, max_length)
+        test_x_z = np.array([[ x, z ]])
+        print(f"(KNN) Koordinaten: {test_x_z}")
 
         # Vorhersage aus Modell erzeugen
-        params = model.predict(test_x_y)
+        params = model.predict(test_x_z)
         knn_alphas = network.sample_from_output(params)
         # skaliere zu den korrekten Einheiten (Grad)
         alpha_bestimmt = functions.scale_knn_to_angle_list(knn_alphas)
+
+        # Winkel beta für die Rotation um die z-Achse
+        # TODO: aufpassen mit Winkel größer 180°!
+        beta = functions.scale_rad_to_grad(math.atan(Y / X))
 
         # Kontrolle durch physikalisches Modell
         for alphas in alpha_bestimmt:
@@ -124,7 +132,7 @@ while True:
             x3_top, y3_top = robotState.get_relative_top_arm3()
 
             print("\n")
-            print(f"(KNN) Winkelvorhersage:       {float(angle1), float(angle2), float(angle3)} Grad")
+            print(f"(KNN) Winkelvorhersage (alpha1, alpha2, alpha3, beta):       {float(angle1), float(angle2), float(angle3), float(beta)} Grad")
             print(f"(MOD) Kontrolle durch Modell: {x3_top, y3_top} cm")
     except ValueError as e:
         print("Keine gültige Position. Erneut versuchen.")

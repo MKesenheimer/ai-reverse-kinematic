@@ -72,7 +72,7 @@ Windows:
 python -m venv venv
 venv\Scripts\activate.bat
 python -m ensurepip --upgrade
-pip install -r requirements.txt
+pip install -r Requirements-tf-windows.txt
 ```
 
 Siehe [Python venv](https://docs.python.org/3/library/venv.html) für weitere Information.
