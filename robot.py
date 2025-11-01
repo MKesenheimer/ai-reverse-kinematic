@@ -134,8 +134,8 @@ class RobotState():
         self.data.set('angle_arm2', angle2)
         x1 = self.data.get('base_x_arm2')
         y1 = self.data.get('base_y_arm2')
-        print(x1, y1)
-        print(angle1, angle2)
+        #print(x1, y1)
+        #print(angle1, angle2)
         r = self.data.get('length_arm2') / 2
         x = x1 + r * math.cos(abs_angle2)
         y = y1 + r * math.sin(abs_angle2)

@@ -91,7 +91,7 @@ train_list_coord = np.array(train_list_coord)
 #model = network.train(train_list_coord, train_list_alpha)
 
 # train model - sequential network
-network = SequentialNetwork(input_dim=2, output_dim=3, num_epochs=200)
+network = SequentialNetwork(input_dim=2, output_dim=3, num_epochs=1)
 model = network.train(train_list_coord, train_list_alpha)
 
 ##########################################################################################
@@ -100,40 +100,54 @@ model = network.train(train_list_coord, train_list_alpha)
 print("Hinweis zu den Koordinaten: x-y-Ebene auf dem Boden, z-Achse zeigt nach oben.")
 while True:
     try:
-        # Benutzereingabe
+        # Benutzereingabe der Koordinaten im raumfesten Koordinatensystem
         X = float(input("X-Position eingeben: "))
         Y = float(input("Y-Position eingeben: "))
         Z = float(input("Z-Position eingeben: "))
-        print(f"\n(KNN) Koordinaten: X{X} Y{Y} Z{Z}")
+        print(f"\nKoordinaten: X{X} Y{Y} Z{Z}")
 
-        # Koordinaten skalieren
-        x = functions.scale_coord_to_knn(X, max_length)
-        y = functions.scale_coord_to_knn(Y, max_length)
-        z = functions.scale_coord_to_knn(Z, max_length)
-        test_x_z = np.array([[ x, z ]])
-        print(f"(KNN) Koordinaten: {test_x_z}")
-
-        # Vorhersage aus Modell erzeugen
-        params = model.predict(test_x_z)
-        knn_alphas = network.sample_from_output(params)
-        # skaliere zu den korrekten Einheiten (Grad)
-        alpha_bestimmt = functions.scale_knn_to_angle_list(knn_alphas)
-
-        # Winkel beta für die Rotation um die z-Achse
+        # Winkel (in rad) beta für die Rotation um die z-Achse
         # dieser Winkel ist einfach zu berechnen und muss nicht traniert werden!
         beta = functions.beta_from_x_y(X, Y)
 
-        # Kontrolle durch physikalisches Modell
-        for alphas in alpha_bestimmt:
-            angle1, angle2, angle3 = alphas
-            robotState.set_angle_in_grad_arm1(angle1)
-            robotState.set_angle_in_grad_arm2(angle2)
-            robotState.set_angle_in_grad_arm3(angle3)
-            x3_top, y3_top = robotState.get_relative_top_arm3()
+        # rechne X und Y in Koordinaten des rotierten Koordinatensystem um -> Xs, Ys
+        Xs =  X * math.cos(beta) + Y * math.sin(beta)
+        Ys = -X * math.sin(beta) + Y * math.cos(beta)
+        Zs = Z
+        print(f"Koordinaten im mitrotierenden KS: Xs{Xs} Ys{Ys} Zs{Zs}")
 
-            print("\n")
-            print(f"(KNN) Winkelvorhersage (alpha1, alpha2, alpha3, beta):       {float(angle1), float(angle2), float(angle3), float(beta)} Grad")
-            print(f"(MOD) Kontrolle durch Modell: {x3_top, y3_top} cm")
+        # Koordinaten skalieren
+        xs = functions.scale_coord_to_knn(Xs, max_length)
+        ys = functions.scale_coord_to_knn(Ys, max_length)
+        zs = functions.scale_coord_to_knn(Zs, max_length)
+        test_xs_zs = np.array([[ xs, zs ]])
+        print(f"Skalierte Koordinaten im mitrotierenden KS für das KNN: xs{xs} ys{ys} zs{zs}")
+
+        # Vorhersage aus Modell erzeugen
+        params = model.predict(test_xs_zs)
+        knn_alphas = network.sample_from_output(params)
+        # skaliere zu den korrekten Einheiten (Grad)
+        alpha_grad = functions.scale_knn_to_angle_list(knn_alphas)
+
+        # Kontrolle durch physikalisches Modell
+        for angle1_grad, angle2_grad, angle3_grad in alpha_grad:
+            angle1_grad = float(angle1_grad)
+            angle2_grad = float(angle2_grad)
+            angle3_grad = float(angle3_grad)
+            beta_grad = functions.scale_rad_to_grad(beta)
+            print(f"Winkelvorhersage (alpha1, alpha2, alpha3, beta): {angle1_grad, angle2_grad, angle3_grad, beta_grad} Grad")
+
+            print("Kontrolle durch Modell:")
+            robotState.set_angle_in_grad_arm1(angle1_grad)
+            robotState.set_angle_in_grad_arm2(angle2_grad)
+            robotState.set_angle_in_grad_arm3(angle3_grad)
+            Xs3_top, Zs3_top = robotState.get_relative_top_arm3()
+
+            # rücktransformation in das raumfeste KS -> X, Y
+            X3_top = Xs3_top * math.cos(beta) - Ys * math.sin(beta)
+            Y3_top = Xs3_top * math.sin(beta) + Ys * math.cos(beta)
+            Z3_top = Zs3_top
+            print(f"Koordinaten im raumfesten KS: X{X3_top} Y{Y3_top} Z{Z3_top}\n")
     except ValueError as e:
         print("Keine gültige Position. Erneut versuchen.")
         print(e)
