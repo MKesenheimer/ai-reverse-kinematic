@@ -58,8 +58,7 @@ max_length = robotState.get_length_arm1() + robotState.get_length_arm2() + robot
 #            else:
 #                print(f" {len(train_list_alpha)} -> der arm ist im boden!")
 
-# TODO @Daniel: Hier bitte die gemessenen Werte eintragen
-# Trainingsdaten von Hand bestimmen (aus Papiermodell)
+# Trainingsdaten von Hand bestimmt (aus Papiermodell)
 # Einheiten:
 # Winkel in Grad
 # Abstände in cm
@@ -86,12 +85,12 @@ train_list_coord = np.array(train_list_coord)
 #print(functions.scale_knn_to_coord_list(train_list_coord, max_length))
 #exit(0)
 
-# train model - micture density network
+# train model - mixture density network
 #network = MixtureDensityNetwork(input_dim=2, output_dim=3, num_epochs=200)
 #model = network.train(train_list_coord, train_list_alpha)
 
 # train model - sequential network
-network = SequentialNetwork(input_dim=2, output_dim=3, num_epochs=1)
+network = SequentialNetwork(input_dim=2, output_dim=3, num_epochs=2000)
 model = network.train(train_list_coord, train_list_alpha)
 
 ##########################################################################################
