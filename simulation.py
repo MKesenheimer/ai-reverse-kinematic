@@ -91,7 +91,7 @@ train_list_coord = np.array(train_list_coord)
 #model = network.train(train_list_coord, train_list_alpha)
 
 # train model - sequential network
-network = SequentialNetwork(input_dim=2, output_dim=3, num_epochs=1)
+network = SequentialNetwork(input_dim=2, output_dim=3, num_epochs=200)
 model = network.train(train_list_coord, train_list_alpha)
 
 ##########################################################################################
@@ -120,8 +120,8 @@ while True:
         alpha_bestimmt = functions.scale_knn_to_angle_list(knn_alphas)
 
         # Winkel beta für die Rotation um die z-Achse
-        # TODO: aufpassen mit Winkel größer 180°!
-        beta = functions.scale_rad_to_grad(math.atan(Y / X))
+        # dieser Winkel ist einfach zu berechnen und muss nicht traniert werden!
+        beta = functions.beta_from_x_y(X, Y)
 
         # Kontrolle durch physikalisches Modell
         for alphas in alpha_bestimmt:

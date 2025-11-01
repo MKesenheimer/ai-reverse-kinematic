@@ -51,3 +51,16 @@ def scale_knn_to_coord_list(coords, max_length):
         for i in range(len(coords[j])):
             coords[j][i] = scale_knn_to_coord(coords[j][i], max_length)
     return coords
+
+# Berechne den Winkel beta in Grad aus den Koordinaten X und Y
+def beta_from_x_y(X, Y):
+    beta = 0
+    if X > 0 and Y > 0:
+        beta = scale_rad_to_grad(math.atan(Y / X))
+    elif X < 0 and Y > 0:
+        beta = 180 + scale_rad_to_grad(math.atan(Y / X))
+    elif X < 0 and Y < 0:
+        beta = 270 - scale_rad_to_grad(math.atan(Y / X))
+    elif X > 0 and Y < 0:
+        beta = 360 + scale_rad_to_grad(math.atan(Y / X))
+    return beta
