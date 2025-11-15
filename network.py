@@ -49,7 +49,7 @@ def plot_history(history):
 
     # Grid and show
     ax1.grid(True)
-    plt.show(block=False)
+    plt.show(block=True)
 
 ## define mixture density model for non-bijective data sets
 class MixtureDensityNetwork():

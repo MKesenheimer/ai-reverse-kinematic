@@ -6,7 +6,6 @@ from network import MixtureDensityNetwork, SequentialNetwork
 #from torchnetwork import SequentialNetwork
 from tensorflow import keras
 import functions
-import paper_model_data
 import math
 import os
 
@@ -27,40 +26,8 @@ robotState.set_angle_in_grad_arm3(0.1)
 max_length = robotState.get_length_arm1() + robotState.get_length_arm2() + robotState.get_length_arm3()
 
 ##########################################################################################
-# Datensatz fürs Training erzeugen                                                       #
+# Laden der Parameter des KNNs                                                           #
 ##########################################################################################
-# Trainingsdaten von Hand bestimmt (aus Papiermodell)
-# Einheiten:
-# Winkel in Grad
-# Abstände in cm
-#train_list_alpha = paper_model_data.list_alpha
-#train_list_coord = paper_model_data.list_coord
-
-
-##########################################################################################
-# Training des KNNs                                                                      #
-##########################################################################################
-# automatische Umrechnung von Winkel in Grad zu Werten zwischen [0, 1]
-#train_list_alpha = functions.scale_angle_list_to_knn(train_list_alpha)
-# automatische Umrechnung der Koordinaten in Werten zwischen [0, 1]
-#train_list_coord = functions.scale_coord_list_to_knn(train_list_coord, max_length)
-
-# Datensätze für das Training in das richtige Format bringen
-#train_list_alpha = np.array(train_list_alpha)
-#train_list_coord = np.array(train_list_coord)
-
-# DEBUG
-#print(functions.scale_knn_to_angle_list(train_list_alpha))
-#print(functions.scale_knn_to_coord_list(train_list_coord, max_length))
-#exit(0)
-
-# train model - mixture density network
-#network = MixtureDensityNetwork(input_dim=2, output_dim=3, num_epochs=200)
-#model = network.train(train_list_coord, train_list_alpha)
-
-# train model - sequential network
-#network = SequentialNetwork(input_dim=2, output_dim=3, num_epochs=200)
-
 print("\nDas sind alle forhandenen Dateien.")
 Models = os.listdir("KNN-models")
 for feil in Models:
