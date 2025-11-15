@@ -35,7 +35,7 @@ def scale_angle_list_to_knn(alphas):
 def scale_knn_to_angle_list(alphas):
     for j in range(len(alphas)):
         for i in range(len(alphas[j])):
-            alphas[j][i] = scale_rad_to_grad(scale_knn_to_rad(alphas[j][i]))
+            alphas[j][i] = float(scale_rad_to_grad(scale_knn_to_rad(alphas[j][i])))
     return alphas
 
 # scale list of coordinates to knn values ([0, 1]) 
@@ -52,15 +52,15 @@ def scale_knn_to_coord_list(coords, max_length):
             coords[j][i] = scale_knn_to_coord(coords[j][i], max_length)
     return coords
 
-# Berechne den Winkel beta in Grad aus den Koordinaten X und Y
+# Berechne den Winkel beta in rad aus den Koordinaten X und Y
 def beta_from_x_y(X, Y):
     beta = 0
     if X > 0 and Y > 0:
-        beta = scale_rad_to_grad(math.atan(Y / X))
+        beta = math.atan(Y / X)
     elif X < 0 and Y > 0:
-        beta = 180 + scale_rad_to_grad(math.atan(Y / X))
+        beta = math.pi + math.atan(Y / X)
     elif X < 0 and Y < 0:
-        beta = 270 - scale_rad_to_grad(math.atan(Y / X))
+        beta = 1.5 * math.pi - math.atan(Y / X)
     elif X > 0 and Y < 0:
-        beta = 360 + scale_rad_to_grad(math.atan(Y / X))
+        beta = 2.0 * math.pi + math.atan(Y / X)
     return beta
