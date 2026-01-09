@@ -3,6 +3,7 @@ import numpy as np
 from network import MixtureDensityNetwork, SequentialNetwork
 # based on pytorch (better AMD support)
 #from torchnetwork import SequentialNetwork
+from gcodeSender import sendGcode
 from tensorflow import keras
 import functions
 import math
@@ -82,7 +83,7 @@ while True:
             # G0 Z<beta_grad>
             # G0 A<angle1_grad>
             # G0 B<angle2_grad>
-            sender.send_gcode("G0 Z<beta_grad>")
+            sendGcode(f"G0 Z{beta_grad} A{angle1_grad} B{angle2_grad}")
 
     except ValueError as e:
         print("Keine gültige Position. Erneut versuchen.")
