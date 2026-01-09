@@ -50,14 +50,14 @@ train_list_coord = np.array(train_list_coord)
 # train model - micture density network
 #network = MixtureDensityNetwork(input_dim=2, output_dim=3, num_epochs=200)
 #model = network.train(train_list_coord, train_list_alpha)
-print("\nDas sind alle forhandenen Dateien.")
-for feil in os.listdir("KNN-models"):
-    print(feil)
+print("\nDas sind alle forhandenen Modelle in KNN-models:")
+for f in os.listdir("KNN-models"):
+    print(f)
 
-data_name = input("\nWie soll das KNN Model Heißen?: ")
+data_name = input("\nWie soll das KNN Model heißen?: ")
 
 # train model - sequential network
 network = SequentialNetwork(input_dim=2, output_dim=3, num_epochs=200)
 model = network.train(train_list_coord, train_list_alpha)
 
-model.save(f"KNN-models\\{data_name}.keras")
+model.save(f"KNN-models/{data_name}.keras")

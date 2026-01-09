@@ -29,20 +29,20 @@ max_length = robotState.get_length_arm1() + robotState.get_length_arm2() + robot
 # Laden der Parameter des KNNs                                                           #
 ##########################################################################################
 print("\nDas sind alle forhandenen Dateien.")
-Models = os.listdir("KNN-models")
-for feil in Models:
-    print(feil)
+parmater_files = os.listdir("KNN-models")
+for f in parmater_files:
+    print(f)
 
-data_name = input("\nWelches KNN Model soll geladen werden? >>")
-for x in range(len(Models)):
-    if Models[x] == data_name:
-        print(f"{data_name} würd geladen...")
+data_name = input("\nWelches KNN Model soll geladen werden? >> ")
+for x in range(len(parmater_files)):
+    if parmater_files[x] == data_name:
+        print(f"{data_name} wird geladen...")
         break
     else:
-        print('suche..')
+        print('suche...')
 
 network = SequentialNetwork(input_dim=2, output_dim=3, num_epochs=200)
-model = keras.models.load_model(f"KNN-models\\{data_name}.keras")
+model = keras.models.load_model(f"KNN-models/{data_name}.keras")
 
 ##########################################################################################
 # Test des Trainings                                                                     #
@@ -78,7 +78,7 @@ while True:
         knn_alphas = network.sample_from_output(params)
         # skaliere zu den korrekten Einheiten (Grad)
         alpha_grad = functions.scale_knn_to_angle_list(knn_alphas)
-        beta_grad   = functions.scale_rad_to_grad(beta)
+        beta_grad  = functions.scale_rad_to_grad(beta)
 
         # Kontrolle durch physikalisches Modell
         for angle1_grad, angle2_grad, angle3_grad in alpha_grad:
