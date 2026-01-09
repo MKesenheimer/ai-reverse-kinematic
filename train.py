@@ -1,5 +1,4 @@
 import numpy as np
-from robot import RobotState
 # based on tensorflow
 from network import MixtureDensityNetwork, SequentialNetwork
 # based on pytorch (better AMD support)
@@ -8,17 +7,11 @@ import functions
 import paper_model_data
 import os
 
-robotState = RobotState()
-robotState.set_length_arm1(7.0)
-robotState.set_base_position_arm1((200, 0))
-robotState.set_angle_in_grad_arm1(0.1)
-
-robotState.set_length_arm2(7.0)
-robotState.set_angle_in_grad_arm2(0.1)
-
-robotState.set_length_arm3(7.0)
-robotState.set_angle_in_grad_arm3(0.1)
-max_length = robotState.get_length_arm1() + robotState.get_length_arm2() + robotState.get_length_arm3()
+##########################################################################################
+# Parameter                                                                              #
+##########################################################################################
+# Maximale Länge des Roboterarms in cm
+max_length = 21
 
 ##########################################################################################
 # Datensatz fürs Training erzeugen                                                       #
@@ -42,12 +35,7 @@ train_list_coord = functions.scale_coord_list_to_knn(train_list_coord, max_lengt
 train_list_alpha = np.array(train_list_alpha)
 train_list_coord = np.array(train_list_coord)
 
-# DEBUG
-#print(functions.scale_knn_to_angle_list(train_list_alpha))
-#print(functions.scale_knn_to_coord_list(train_list_coord, max_length))
-#exit(0)
-
-# train model - micture density network
+# train model - mixture density network
 #network = MixtureDensityNetwork(input_dim=2, output_dim=3, num_epochs=200)
 #model = network.train(train_list_coord, train_list_alpha)
 print("\nDas sind alle forhandenen Modelle in KNN-models:")

@@ -1,5 +1,4 @@
 import numpy as np
-from robot import RobotState
 # based on tensorflow
 from network import MixtureDensityNetwork, SequentialNetwork
 # based on pytorch (better AMD support)
@@ -10,20 +9,10 @@ import math
 import os
 
 ##########################################################################################
-# Roboterarm initialisieren                                                              #
+# Parameter                                                                              #
 ##########################################################################################
-# TODO: Parameter des physikalischen Modells hier eintragen
-robotState = RobotState()
-robotState.set_length_arm1(7.0)
-robotState.set_base_position_arm1((200, 0))
-robotState.set_angle_in_grad_arm1(0.1)
-
-robotState.set_length_arm2(7.0)
-robotState.set_angle_in_grad_arm2(0.1)
-
-robotState.set_length_arm3(7.0)
-robotState.set_angle_in_grad_arm3(0.1)
-max_length = robotState.get_length_arm1() + robotState.get_length_arm2() + robotState.get_length_arm3()
+# Maximale Länge des Roboterarms in cm
+max_length = 25.8
 
 ##########################################################################################
 # Laden der Parameter des KNNs                                                           #
@@ -41,7 +30,7 @@ for x in range(len(parmater_files)):
     else:
         print('suche...')
 
-network = SequentialNetwork(input_dim=2, output_dim=3, num_epochs=200)
+network = SequentialNetwork(input_dim=2, output_dim=2, num_epochs=200)
 model = keras.models.load_model(f"KNN-models/{data_name}.keras")
 
 ##########################################################################################
@@ -81,23 +70,20 @@ while True:
         beta_grad  = functions.scale_rad_to_grad(beta)
 
         # Kontrolle durch physikalisches Modell
-        for angle1_grad, angle2_grad, angle3_grad in alpha_grad:
+        for angle1_grad, angle2_grad in alpha_grad:
             angle1_grad = float(angle1_grad)
             angle2_grad = float(angle2_grad)
-            angle3_grad = float(angle3_grad)
-            print(f"Winkelvorhersage (alpha1, alpha2, alpha3, beta): {angle1_grad, angle2_grad, angle3_grad, beta_grad} Grad")
+            print(f"Winkelvorhersage (beta, alpha1, alpha2): {beta_grad, angle1_grad, angle2_grad} Grad")
 
-            print("Kontrolle durch Modell:")
-            robotState.set_angle_in_grad_arm1(angle1_grad)
-            robotState.set_angle_in_grad_arm2(angle2_grad)
-            robotState.set_angle_in_grad_arm3(angle3_grad)
-            Xs3_top, Zs3_top = robotState.get_relative_top_arm3()
+            # TODO:
+            # An der Stelle Kommunikation mit dem "echten" Roboterarm einfügen
+            # -> GCodes an den Roboterarm senden
+            # bspw.:
+            # G0 Z<beta_grad>
+            # G0 A<angle1_grad>
+            # G0 B<angle2_grad>
+            sender.send_gcode("G0 Z<beta_grad>")
 
-            # rücktransformation in das raumfeste KS: Xs, Ys -> X, Y
-            X3_top = Xs3_top * math.cos(beta) - Ys * math.sin(beta)
-            Y3_top = Xs3_top * math.sin(beta) + Ys * math.cos(beta)
-            Z3_top = Zs3_top
-            print(f"Koordinaten im raumfesten KS: X{X3_top} Y{Y3_top} Z{Z3_top}\n")
     except ValueError as e:
         print("Keine gültige Position. Erneut versuchen.")
         print(e)
