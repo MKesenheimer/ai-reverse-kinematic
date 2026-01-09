@@ -8,12 +8,18 @@ from tensorflow import keras
 import functions
 import math
 import os
+import json
 
 ##########################################################################################
 # Parameter                                                                              #
 ##########################################################################################
 # Maximale Länge des Roboterarms in cm
-max_length = 25.8
+def load_model_data(filename="model_data.json"):
+    with open(filename, "r") as f:
+        data = json.load(f)
+    max_length = data.get("max_length")
+    return max_length
+max_length = load_model_data()
 
 ##########################################################################################
 # Laden der Parameter des KNNs                                                           #
