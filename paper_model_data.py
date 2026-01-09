@@ -1,5 +1,8 @@
 # Diese bibliothek dient nur zur speicherung der daten des Papier model
 
+# Maximale Länge des Roboterarms in cm
+max_length = 21
+
 # Winkel der Gelenke: alpha1, alpha2, alpha3
 list_alpha = [[115,107,128], [70,126,120],[105,120,163],[138,104,111],[86,128,144],[105,88,136],[124,103,107],[145,77,105],[138,113,130],[116,73,130],[100,131,126],[118,127,75],[102,102,114],[66,137,159],[66,151,163],[104,130,139],[80,141,159],[123,129,121],[117,90,124],[83,120,125],[85,119,126]]
 # Koordinaten in der x-z-Ebene in cm: x, z
