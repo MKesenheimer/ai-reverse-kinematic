@@ -8,11 +8,11 @@ import json
 ##########################################################################################
 # TODO: Parameter des physikalischen Modells hier eintragen
 robotState = RobotState()
-robotState.set_length_arm1(7.0)
+robotState.set_length_arm1(24.0)
 robotState.set_base_position_arm1((200, 0))
 robotState.set_angle_in_grad_arm1(180)
 
-robotState.set_length_arm2(7.0)
+robotState.set_length_arm2(19.3)
 robotState.set_angle_in_grad_arm2(180)
 
 robotState.set_length_arm3(0.0)
@@ -79,4 +79,4 @@ data = {
 with open("model_data.json", "w") as f:
     json.dump(data, f, indent=4)
 
-print("Koordinaten nach model_data.json gespeichert.\nEnde.")
+print("\nKoordinaten nach model_data.json gespeichert.\nEnde.")
