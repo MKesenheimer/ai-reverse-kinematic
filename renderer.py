@@ -15,13 +15,13 @@ renderer = ctypes.POINTER(sdl3.SDL_Renderer)()
 window = ctypes.POINTER(sdl3.SDL_Window)()
 world = b2World(gravity=b2Vec2(0, 9.8))
 # pixels per meter
-ppm = 30
+ppm = 3
 # state of the robot
 robotState = RobotState()
 
 # ground position
-xGround = 250
-yGround = 250
+xGround = 100
+yGround = 80
 
 @sdl3.SDL_AppInit_func
 def SDL_AppInit(appstate, argc, argv):
@@ -49,10 +49,10 @@ def SDL_AppInit(appstate, argc, argv):
 
     # Create a ground body
     groundBodyDef = b2BodyDef()
-    groundBodyDef.position = b2Vec2(xGround / ppm, (yGround + 40 / 2) / ppm)
+    groundBodyDef.position = b2Vec2(xGround, (yGround + 40 / 2))
     groundBody = world.CreateBody(groundBodyDef)
     groundShape = b2PolygonShape()
-    groundShape.SetAsBox(400 / 2 / ppm, 40 / 2 / ppm)
+    groundShape.SetAsBox(400 / 2, 40 / 2)
     groundFixtureDef = b2FixtureDef()
     groundFixtureDef.shape = groundShape
     groundFixtureDef.density = 0
@@ -60,10 +60,10 @@ def SDL_AppInit(appstate, argc, argv):
 
     # create joint0 body
     joint0BodyDef = b2BodyDef()
-    joint0BodyDef.position = b2Vec2(robotState.get_x_base_arm1() / ppm, robotState.get_y_base_arm1() / ppm)
+    joint0BodyDef.position = b2Vec2(robotState.get_x_base_arm1(), robotState.get_y_base_arm1())
     robotJoint0 = world.CreateBody(joint0BodyDef)
     joint0Shape = b2CircleShape()
-    joint0Shape.radius = 10 / ppm
+    joint0Shape.radius = 5
     joint0FixtureDef = b2FixtureDef()
     joint0FixtureDef.shape = joint0Shape
     joint0FixtureDef.density = 0
@@ -74,15 +74,14 @@ def SDL_AppInit(appstate, argc, argv):
     robotArm1_x = float(robotState.get_x_arm1())
     robotArm1_y = float(robotState.get_y_arm1())
     robotArm1_angle = -float(robotState.get_angle_arm1())
-    print(robotArm1_angle)
     robotArm1Def = b2BodyDef()
     robotArm1Def.allowSleep = False
-    robotArm1Def.position = b2Vec2(robotArm1_x / ppm, yGround / ppm + robotArm1_y / ppm)
+    robotArm1Def.position = b2Vec2(robotArm1_x, yGround + robotArm1_y)
     robotArm1Def.angle = robotArm1_angle
     #robotArm1Def.type = b2_dynamicBody
     robotArm1 = world.CreateBody(robotArm1Def)
     robotArm1Shape = b2PolygonShape()
-    robotArm1Shape.SetAsBox(robotArm1_length / 2 / ppm, 10 / 2 / ppm)
+    robotArm1Shape.SetAsBox(robotArm1_length / 2, 5 / 2)
     robotArm1FixtureDef = b2FixtureDef()
     robotArm1FixtureDef.shape = robotArm1Shape
     robotArm1FixtureDef.density = 0
@@ -90,10 +89,10 @@ def SDL_AppInit(appstate, argc, argv):
 
     # create joint1 body
     joint1BodyDef = b2BodyDef()
-    joint1BodyDef.position = b2Vec2(robotState.get_x_top_arm1() / ppm, yGround / ppm - robotState.get_y_top_arm1() / ppm)
+    joint1BodyDef.position = b2Vec2(robotState.get_x_top_arm1(), yGround - robotState.get_y_top_arm1())
     robotJoint1 = world.CreateBody(joint1BodyDef)
     joint1Shape = b2CircleShape()
-    joint1Shape.radius = 8 / ppm
+    joint1Shape.radius = 4
     joint1FixtureDef = b2FixtureDef()
     joint1FixtureDef.shape = joint1Shape
     joint1FixtureDef.density = 0
@@ -106,12 +105,12 @@ def SDL_AppInit(appstate, argc, argv):
     robotArm2_angle = -float(robotState.get_angle_arm2())
     robotArm2Def = b2BodyDef()
     robotArm2Def.allowSleep = False
-    robotArm2Def.position = b2Vec2(robotArm2_x / ppm, yGround / ppm - robotArm2_y / ppm)
+    robotArm2Def.position = b2Vec2(robotArm2_x, yGround - robotArm2_y)
     robotArm2Def.angle = robotArm2_angle
     #robotArm2Def.type = b2_dynamicBody
     robotArm2 = world.CreateBody(robotArm2Def)
     robotArm2Shape = b2PolygonShape()
-    robotArm2Shape.SetAsBox(robotArm2_length / 2 / ppm, 10 / 2 / ppm)
+    robotArm2Shape.SetAsBox(robotArm2_length / 2, 5 / 2)
     robotArm2FixtureDef = b2FixtureDef()
     robotArm2FixtureDef.shape = robotArm2Shape
     robotArm2FixtureDef.density = 0
@@ -119,10 +118,10 @@ def SDL_AppInit(appstate, argc, argv):
 
     # create joint2 body
     joint2BodyDef = b2BodyDef()
-    joint2BodyDef.position = b2Vec2(robotState.get_x_top_arm2() / ppm, yGround / ppm - robotState.get_y_top_arm2() / ppm)
+    joint2BodyDef.position = b2Vec2(robotState.get_x_top_arm2(), yGround - robotState.get_y_top_arm2())
     robotJoint2 = world.CreateBody(joint2BodyDef)
     joint2Shape = b2CircleShape()
-    joint2Shape.radius = 8 / ppm
+    joint2Shape.radius = 4
     joint2FixtureDef = b2FixtureDef()
     joint2FixtureDef.shape = joint2Shape
     joint2FixtureDef.density = 0
@@ -135,12 +134,12 @@ def SDL_AppInit(appstate, argc, argv):
     robotArm3_angle = -float(robotState.get_angle_arm3())
     robotArm3Def = b2BodyDef()
     robotArm3Def.allowSleep = False
-    robotArm3Def.position = b2Vec2(robotArm3_x / ppm, yGround / ppm - robotArm3_y / ppm)
+    robotArm3Def.position = b2Vec2(robotArm3_x, yGround - robotArm3_y)
     robotArm3Def.angle = robotArm3_angle
     #robotArm3Def.type = b2_dynamicBody
     robotArm3 = world.CreateBody(robotArm3Def)
     robotArm3Shape = b2PolygonShape()
-    robotArm3Shape.SetAsBox(robotArm3_length / 2 / ppm, 10 / 2 / ppm)
+    robotArm3Shape.SetAsBox(robotArm3_length / 2, 5 / 2)
     robotArm3FixtureDef = b2FixtureDef()
     robotArm3FixtureDef.shape = robotArm3Shape
     robotArm3FixtureDef.density = 0
@@ -148,10 +147,10 @@ def SDL_AppInit(appstate, argc, argv):
 
     # create joint3 body
     joint3BodyDef = b2BodyDef()
-    joint3BodyDef.position = b2Vec2(robotState.get_x_top_arm3() / ppm, yGround / ppm - robotState.get_y_top_arm3() / ppm)
+    joint3BodyDef.position = b2Vec2(robotState.get_x_top_arm3(), yGround - robotState.get_y_top_arm3())
     robotJoint3 = world.CreateBody(joint3BodyDef)
     joint3Shape = b2CircleShape()
-    joint3Shape.radius = 8 / ppm
+    joint3Shape.radius = 4
     joint3FixtureDef = b2FixtureDef()
     joint3FixtureDef.shape = joint3Shape
     joint3FixtureDef.density = 0
@@ -173,19 +172,19 @@ def SDL_AppIterate(appstate):
     sdl3.SDL_SetRenderDrawColor(renderer, 33, 33, 33, sdl3.SDL_ALPHA_OPAQUE)
     sdl3.SDL_RenderClear(renderer) # Start with a blank canvas
     
-    robotJoint0.position = b2Vec2(robotState.get_x_base_arm1() / ppm, yGround / ppm - robotState.get_y_base_arm1() / ppm)
+    robotJoint0.position = b2Vec2(robotState.get_x_base_arm1(), yGround - robotState.get_y_base_arm1())
 
     robotArm1.angle = -robotState.get_absolute_angle_arm1()
-    robotArm1.position = b2Vec2(robotState.get_x_arm1() / ppm, yGround / ppm - robotState.get_y_arm1() / ppm)
-    robotJoint1.position = b2Vec2(robotState.get_x_top_arm1() / ppm, yGround / ppm - robotState.get_y_top_arm1() / ppm)
+    robotArm1.position = b2Vec2(robotState.get_x_arm1(), yGround - robotState.get_y_arm1())
+    robotJoint1.position = b2Vec2(robotState.get_x_top_arm1(), yGround - robotState.get_y_top_arm1())
 
     robotArm2.angle = -robotState.get_absolute_angle_arm2()
-    robotArm2.position = b2Vec2(robotState.get_x_arm2() / ppm, yGround / ppm - robotState.get_y_arm2() / ppm)
-    robotJoint2.position = b2Vec2(robotState.get_x_top_arm2() / ppm, yGround / ppm - robotState.get_y_top_arm2() / ppm)
+    robotArm2.position = b2Vec2(robotState.get_x_arm2(), yGround - robotState.get_y_arm2())
+    robotJoint2.position = b2Vec2(robotState.get_x_top_arm2(), yGround - robotState.get_y_top_arm2())
 
     robotArm3.angle = -robotState.get_absolute_angle_arm3()
-    robotArm3.position = b2Vec2(robotState.get_x_arm3() / ppm, yGround / ppm - robotState.get_y_arm3() / ppm)
-    robotJoint3.position = b2Vec2(robotState.get_x_top_arm3() / ppm, yGround / ppm - robotState.get_y_top_arm3() / ppm)
+    robotArm3.position = b2Vec2(robotState.get_x_arm3(), yGround - robotState.get_y_arm3())
+    robotJoint3.position = b2Vec2(robotState.get_x_top_arm3(), yGround - robotState.get_y_top_arm3())
 
     world.Step(0.016, 3, 2)
     world.DrawDebugData()

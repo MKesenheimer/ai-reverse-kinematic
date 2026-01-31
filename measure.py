@@ -8,11 +8,10 @@ import time
 ##########################################################################################
 # Roboterarm initialisieren                                                              #
 ##########################################################################################
-# TODO: Parameter des physikalischen Modells hier eintragen
 robotState = RobotState()
 robotState.set_length_arm1(24.0)
-robotState.set_base_position_arm1((200, 0))
-robotState.set_angle_in_grad_arm1(180)
+robotState.set_base_position_arm1((80, 0))
+robotState.set_angle_in_grad_arm1(90)
 
 robotState.set_length_arm2(19.3)
 robotState.set_angle_in_grad_arm2(180)
