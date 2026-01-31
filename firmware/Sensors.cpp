@@ -40,7 +40,17 @@ double Sensors::getAngle(int id) {
   /* Raw data reports 0 - 4095 segments, which is 0.087 of a degree */
   double retVal = direction[id] * ((ams5600.rawAngle() * 0.087) - amsOffsets[id]);
 
-  if (retVal > 360.0) retVal = retVal - 360;
-  if (retVal < 0) retVal = retVal + 360;
+  // z-Achse ist von -180° - 180° definiert:
+  if (id == 0 && retVal > 180.0) retVal = retVal - 360;
+  if (id == 0 && retVal < -180.0) retVal = retVal + 360;
+
+  // alle anderen Winkel sind von 0 - 360° definiert
+  if (id != 0 && retVal > 360.0) retVal = retVal - 360;
+  if (id != 0 && retVal < 0) retVal = retVal + 360;
+
+  /*Serial.print("angle(");
+  Serial.print(id);
+  Serial.print(") = ");
+  Serial.println(retVal);*/
   return retVal;
 }

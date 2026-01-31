@@ -15,7 +15,8 @@ class Sensors {
     AS5600 ams5600;
     // AS5600L with address 0x40, address changeable with ams5600.setAddress(uint8_t address)
     //AS5600L ams5600;
-    double amsOffsets[6] = {249, 110, -102, 0, 0, 0};
+    // Reihenfolge: beta, alpha1, alpha2, alpha3, ...
+    double amsOffsets[6] = {30, 195, -102, 0, 0, 0};
     int direction[6] = {-1, 1, 1, 1, 1, 1};
     void tcaselect(uint8_t);
 };

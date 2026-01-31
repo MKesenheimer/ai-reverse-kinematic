@@ -3,12 +3,13 @@ import numpy as np
 from network import MixtureDensityNetwork, SequentialNetwork
 # based on pytorch (better AMD support)
 #from torchnetwork import SequentialNetwork
-from gcodeSender import sendGcode
+from gcodeSender import GCodeSender
 from tensorflow import keras
 import functions
 import math
 import os
 import json
+import time
 
 ##########################################################################################
 # Parameter                                                                              #
@@ -39,6 +40,12 @@ for x in range(len(parmater_files)):
 
 network = SequentialNetwork(input_dim=2, output_dim=2, num_epochs=200)
 model = keras.models.load_model(f"KNN-models/{data_name}.keras")
+
+##########################################################################################
+# GCodeSender initialisieren                                                              #
+##########################################################################################
+sender = GCodeSender("/dev/tty.usbserial-1120")
+time.sleep(1)
 
 ##########################################################################################
 # Test des Trainings                                                                     #
@@ -82,14 +89,12 @@ while True:
             angle2_grad = float(angle2_grad)
             print(f"Winkelvorhersage (beta, alpha1, alpha2): {beta_grad, angle1_grad, angle2_grad} Grad")
 
-            # TODO:
-            # An der Stelle Kommunikation mit dem "echten" Roboterarm einfügen
             # -> GCodes an den Roboterarm senden
             # bspw.:
             # G0 Z<beta_grad>
             # G0 A<angle1_grad>
             # G0 B<angle2_grad>
-            sendGcode(f"G0 Z{beta_grad} A{angle1_grad} B{angle2_grad}")
+            sender.sendGcode(f"G0 Z{beta_grad} A{angle1_grad} B{angle2_grad}")
 
     except ValueError as e:
         print("Keine gültige Position. Erneut versuchen.")

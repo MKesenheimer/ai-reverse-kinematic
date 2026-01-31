@@ -2,6 +2,8 @@ from robot import RobotState
 import functions
 import math
 import json
+from gcodeSender import GCodeSender
+import time
 
 ##########################################################################################
 # Roboterarm initialisieren                                                              #
@@ -20,6 +22,12 @@ robotState.set_angle_in_grad_arm3(180)
 max_length = robotState.get_length_arm1() + robotState.get_length_arm2() + robotState.get_length_arm3()
 
 ##########################################################################################
+# GCodeSender initialisieren                                                              #
+##########################################################################################
+sender = GCodeSender("/dev/tty.usbserial-1120")
+time.sleep(1)
+
+##########################################################################################
 # Messung durchführen                                                                    #
 ##########################################################################################
 list_alpha = []
@@ -32,12 +40,13 @@ while True:
     # M0 Z<beta_grad>
     # M0 A<angle1_grad>
     # M0 B<angle2_grad>
-    beta_grad = sender.send_gcode_and_read("M0 Z")
-    angle1_grad = sender.send_gcode_and_read("M0 A")
-    angle2_grad = sender.send_gcode_and_read("M0 B")
-    #beta_grad = 180
-    #angle1_grad = 180
-    #angle2_grad = 90
+    #print(input())
+    try:
+        beta_grad = float(sender.sendGcode("M0 Z"))
+        angle1_grad = float(sender.sendGcode("M0 A"))
+        angle2_grad = float(sender.sendGcode("M0 B"))
+    except Exception as e:
+        print(f"Fehler bei der Konvertierung: {e}")
 
     beta = functions.scale_grad_to_rad(beta_grad)
 
@@ -52,7 +61,8 @@ while True:
     Y3_top = Xs3_top * math.sin(beta) + Ys * math.cos(beta)
     Z3_top = Zs3_top
 
-    print(f"\nKoordinaten im raumfesten KS: X{X3_top} Y{Y3_top} Z{Z3_top}\n")
+    print(f"\nWinkel: beta = {beta_grad}, alpha1 = {angle1_grad}, alpha2 = {angle2_grad}")
+    print(f"Koordinaten im raumfesten KS: X{X3_top} Y{Y3_top} Z{Z3_top}\n")
 
     alpha_values = [angle1_grad, angle2_grad]
     list_alpha.append(alpha_values)

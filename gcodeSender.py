@@ -1,25 +1,28 @@
 import serial
-import time
 
-# Open serial port
+class GCodeSender:
+    def __init__(self, port):
+        # Open serial port
+        self.s = serial.Serial(port, 115200, timeout=1)
 
-s = serial.Serial("COM3",115200, timeout=1)
+    def sendGcode(self, Gcode): # sendet einzelne Gcode befele
+        line = Gcode.strip() # Strip all EOL characters for consistency
+        print('Sending: ' + line),
+        self.s.write((line + '\n').encode()) # Send g-code block to grbl
 
-def sendGcode(Gcode): # sendet einzelne Gcode befele
-    l = Gcode.strip() # Strip all EOL characters for consistency
-    global s
-    print('Sending: ' + l),
-    s.write((l + '\n').encode()) # Send g-code block to grblÂ³
-
-    Status = None
-    grbl_out = b''
-    while grbl_out != b'ok\r\n':
-        grbl_out = s.readline() # Wait for grbl response with carriage return
-        if grbl_out != b'\r\n' and grbl_out != b'ok\r\n':
-            #print(f'RoboterArm: {grbl_out.strip()}')
-            Status = grbl_out
-    return Status
+        Status = None
+        grbl_out = b''
+        while grbl_out != b'ok\r\n':
+            grbl_out = self.s.readline() # Wait for grbl response with carriage return
+            if grbl_out != b'\r\n' and grbl_out != b'ok\r\n':
+                #print(f'RoboterArm: {grbl_out.strip()}')
+                Status = grbl_out
+        return Status
 
 if __name__ == "__main__":
+    sender = GCodeSender(port = "COM3")
     while True:
-        sendGcode(input(">>"))
+        rueckgabewert = sender.sendGcode(input(">>"))
+
+    sender2 = GCodeSender(port = "COM4")
+    sender2.sendGcode("G0 A180 F100")

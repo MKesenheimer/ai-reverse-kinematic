@@ -6,4 +6,4 @@ graphviz
 PySDL3
 Box2D
 redis
-serial
+pyserial

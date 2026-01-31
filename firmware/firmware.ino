@@ -4,10 +4,17 @@
 #include <GCodeParser.h>
 #include "Sensors.h"
 
+// Kalibrierung:
+// 1. Zeile 223 (msteppers.moveTo(sollWert);) auskommentieren
+// 2. sollWert in Zeile 17 auf Null setzen.
+// 3. Nullpositionen bestimmen: Roboterarm auf seine Nullposition stellen, und dabei die motorPosition auslesen (siehe Zeile 217).
+// 4. Nullpositionen in sollWert eintragen (Zeile 17)
+// 5. Zeile 223 wieder einkommentieren
+
 AccelStepper steppers[6];
 MultiStepper msteppers;
 int incomingByte = 0; // for incoming serial data
-long stepperPos[6] = {7329, 4813, 2790, 0, 0, 0};
+long sollWert[6] = {-53, 1087, 2861, 0, 0, 0}; 
 long stepsPerFullTurn[6] = {16000, 16000, 16000, 16000, 16000, 16000};
 GCodeParser GCode = GCodeParser();
 //static double angle = 0;
@@ -69,7 +76,7 @@ void setup() {
   Timer3.attachInterrupt(runSteppers);
 
   for (int i = 0; i < 6; ++i) {
-    steppers[i].setCurrentPosition(stepperPos[i]);
+    steppers[i].setCurrentPosition(sollWert[i]);
   }
 }
 
@@ -79,13 +86,13 @@ void runSteppers(void) {
 
 void moveDegrees(int stepper, double degrees) {
   if (stepper < numberOfMotors) {
-    /*Serial.print("Moving stepper ");
+    Serial.print("Moving stepper ");
     Serial.print(stepper);
     Serial.print(" ");
     Serial.print(degrees);
-    Serial.println(" degrees");*/
+    Serial.println(" degrees");
     double stepPos = stepsPerFullTurn[stepper] * degrees / 360.0 ;
-    stepperPos[stepper] = (long)stepPos;
+    sollWert[stepper] = (long)stepPos;
   }
 }
 
@@ -191,13 +198,13 @@ void loop() {
     for (int i=0; i<numberOfMotors; i++) {
       double sensorPosition = 0;
       double diff = 0;
-      double motorPosition = steppers[i].currentPosition();
+      double istWert = steppers[i].currentPosition();
       double der = 0;
       if (i<numberOfSensors) {
         sensorPosition = sensors.getAngle(i) * stepsPerFullTurn[i] / 360.0;
         
         // pid correction
-        diff = sensorPosition - motorPosition;
+        diff = sensorPosition - istWert;
         acc[i] += diff;
         der = last[i] - diff;
         last[i] = diff;
@@ -205,10 +212,15 @@ void loop() {
         //Serial.print(diff);
         //Serial.print(" ");
       }
-      steppers[i].setCurrentPosition(motorPosition + kp[i] * diff + ki[i] * acc[i] + kd[i] * der);
-      //Serial.println(motorPosition);
+      steppers[i].setCurrentPosition(istWert + kp[i] * diff + ki[i] * acc[i] + kd[i] * der);
+
+      //if (i == 0) {
+      //  Serial.print(i);
+      //  Serial.print(" = ");
+      //  Serial.println(istWert);
+      //}
     }
-    msteppers.moveTo(stepperPos);
+    msteppers.moveTo(sollWert);
     //Serial.println();
   }
 }
