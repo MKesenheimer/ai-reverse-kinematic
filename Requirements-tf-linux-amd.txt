@@ -1,0 +1,9 @@
+--find-links https://repo.radeon.com/rocm/manylinux/rocm-rel-7.2
+tensorflow-rocm==2.19.1
+numpy
+matplotlib
+graphviz
+PySDL3
+Box2D
+redis
+pyserial

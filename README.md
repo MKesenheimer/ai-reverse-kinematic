@@ -64,7 +64,7 @@ cd ai-reverse-kinematic
 python3.12 -m venv venv
 source venv/bin/activate
 python -m ensurepip --upgrade
-pip3 install -r requirements.txt
+pip3 install -r Requirements-tf-linux-amd.txt
 ```
 
 Windows:
@@ -104,4 +104,18 @@ Ausführen der Skripte:
 ```bash
 python simulation.py
 python renderer.py
+```
+
+## Training auf der Grafikkarte
+
+Treiber installieren:
+
+```bash
+sudo pacman -S rocm-opencl-runtime hip-runtime-amd rocm-opencl-icd rocm-device-libs
+```
+
+Welche Geräte sind vorhanden?
+
+```bash
+rocminfo| grep gfx
 ```
