@@ -53,15 +53,15 @@ git reset --hard <commit-hash>
 
 ## Installation
 
-Linux / Unix:
+Linux / Unix (die Python-Version ist wichtig!):
 
 ```bash
-yay -S python311
+yay -S python312
 ```
 
 ```bash
 cd ai-reverse-kinematic
-python3.11 -m venv venv
+python3.12 -m venv venv
 source venv/bin/activate
 python -m ensurepip --upgrade
 pip3 install -r requirements.txt
